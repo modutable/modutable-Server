@@ -1,8 +1,8 @@
 import express, { Request, Response, NextFunction } from "express";
-import hostRouter from "./host";
+import hostController from "../controller/host";
 
 const router = express.Router();
 
-router.use("/mainView", hostRouter);
+router.get("/hostaddress", hostController.mainAddress);
 
 export = router;

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/server.js",
+    "start": "nodemon --exec ts-node src/server.ts",
     "dev": "nodemon src/server.ts",
     "build": "tsc -p ."
   },
@@ -25,7 +25,9 @@
     "@types/node": "^12.0.2",
     "express": "^4.17.1",
     "nodemon": "^1.19.1",
+    "reflect-metadata": "^0.1.13",
     "ts-node": "^8.2.0",
+    "typeorm": "^0.2.17",
     "typescript": "^3.4.5"
   }
 }
