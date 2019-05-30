@@ -27,4 +27,6 @@ export class users extends BaseEntity {
   createdAt: number;
   @Column()
   updatedAt: number;
+  @Column()
+  profile: string;
 }
