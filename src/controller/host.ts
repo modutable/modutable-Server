@@ -4,15 +4,28 @@ import { getRepository, Like } from "typeorm";
 import { hosts } from "../entity/hosts";
 
 export = {
-  mainAddress: async (req: Request, res: Response) => {
+  mainViewAddress: async (req: Request, res: Response) => {
     const { searchAddress } = req.body;
-    const table = await getRepository(hosts)
+    const resultHosts = await getRepository(hosts)
       .createQueryBuilder("hosts")
       .select(["hosts.address"])
       .where("hosts.address like :searchKeyword", {
         searchKeyword: `%${searchAddress}%`
       })
       .getMany();
-    res.json(table);
+    res.json(resultHosts);
+  },
+  quickSearchHost: async (req: Request, res: Response) => {
+    const { city, date, guests } = req.body;
+    const resultHosts = await getRepository(hosts)
+      .createQueryBuilder("hosts")
+      .where("hosts.address like :searchCity", { searchCity: `%${city}%` })
+      .andWhere("hosts.openDate <= :searchDate", { searchDate: date })
+      .andWhere("hosts.closeDate >= :searchDate", { searchdate: date })
+      .andWhere("hosts.guestMin <= :searchGuests", { searchGuests: guests })
+      .andWhere("hosts.guestMax >= :searchGuests", { searchGuests: guests })
+      .getMany();
+
+    res.json(resultHosts);
   }
 };

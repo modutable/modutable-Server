@@ -3,6 +3,7 @@ import hostController from "../controller/host";
 
 const router = express.Router();
 
-router.get("/hostaddress", hostController.mainAddress);
+router.get("/hostaddress", hostController.mainViewAddress);
+router.get("/quickhost", hostController.quickSearchHost);
 
 export = router;

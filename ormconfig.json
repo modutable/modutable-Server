@@ -1,9 +1,9 @@
 {
   "type": "mysql",
-  "host": "localhost",
-  "port": 3306,
+  "host": "",
+  "port": 3307,
   "username": "root",
-  "password": "jayajung!",
+  "password": "",
   "database": "modutable",
   "entities": ["src/entity/*.ts"],
   "synchronize": false,
