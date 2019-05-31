@@ -1,0 +1,11 @@
+{
+  "type": "mysql",
+  "host": "",
+  "port": 3307,
+  "username": "root",
+  "password": "1q2w3e4r!",
+  "database": "modutable",
+  "entities": ["src/entity/*.ts"],
+  "synchronize": false,
+  "migrationsRun": true
+}
