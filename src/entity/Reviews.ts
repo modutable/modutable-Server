@@ -3,11 +3,13 @@ import {
   BaseEntity,
   PrimaryGeneratedColumn,
   Column,
-  Double
+  Double,
+  ManyToOne
 } from "typeorm";
+import { Hosts } from "./Hosts";
 
 @Entity()
-export class reviews extends BaseEntity {
+export class Reviews extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -19,6 +21,7 @@ export class reviews extends BaseEntity {
   createdAt: Date;
   @Column()
   updatedAt: Date;
-  @Column()
-  host_id: number;
+
+  @ManyToOne(type => Hosts, hosts => hosts.review)
+  host: Hosts;
 }

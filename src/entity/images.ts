@@ -3,11 +3,13 @@ import {
   BaseEntity,
   PrimaryGeneratedColumn,
   Column,
-  Double
+  Double,
+  ManyToOne
 } from "typeorm";
+import { Hosts } from "./Hosts";
 
 @Entity()
-export class images extends BaseEntity {
+export class Images extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -15,4 +17,6 @@ export class images extends BaseEntity {
   url: string;
   @Column()
   host_id: number;
+  @ManyToOne(type => Hosts, hosts => hosts.images)
+  host: Hosts;
 }

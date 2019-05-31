@@ -3,11 +3,12 @@ import {
   BaseEntity,
   PrimaryGeneratedColumn,
   Column,
-  Double
+  ManyToOne
 } from "typeorm";
+import { Users } from "./Users";
 
 @Entity()
-export class travelers extends BaseEntity {
+export class Travelers extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -21,6 +22,6 @@ export class travelers extends BaseEntity {
   createdAt: Date;
   @Column()
   updatedAt: Date;
-  @Column()
-  user_id: number;
+  @ManyToOne(type => Users, user => user.Travelers)
+  user: Users[];
 }
