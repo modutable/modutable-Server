@@ -1,6 +1,6 @@
 {
   "type": "mysql",
-  "host": "foreweeksproject.cpwazflvhrqz.ap-northeast-2.rds.amazonaws.com",
+  "host": "",
   "port": 3307,
   "username": "root",
   "password": "1q2w3e4r!",
