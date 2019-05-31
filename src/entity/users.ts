@@ -3,11 +3,15 @@ import {
   BaseEntity,
   PrimaryGeneratedColumn,
   Column,
-  Double
+  Double,
+  OneToMany,
+  ManyToMany,
+  JoinTable
 } from "typeorm";
-
+import { Hosts } from "./Hosts";
+import { Travelers } from "./Travelers";
 @Entity()
-export class users extends BaseEntity {
+export class Users extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -29,4 +33,13 @@ export class users extends BaseEntity {
   updatedAt: number;
   @Column()
   profile: string;
+
+  @OneToMany(type => Hosts, hosts => hosts.user)
+  hosts: Hosts[];
+  @OneToMany(type => Travelers, travelers => travelers.user)
+  Travelers: Travelers[];
+
+  @ManyToMany(type => Hosts, hosts => hosts.Musers)
+  @JoinTable()
+  Mhosts: Hosts[];
 }

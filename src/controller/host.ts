@@ -1,31 +1,35 @@
 import { Request, Response } from "express";
 import "reflect-metadata";
-import { getRepository, Like } from "typeorm";
-import { hosts } from "../entity/hosts";
+import { getRepository, Like, createQueryBuilder } from "typeorm";
+import { Hosts } from "../entity/Hosts";
+import { Users } from "../entity/Users";
+import { Travelers } from "../entity/Travelers";
 
 export = {
-  mainViewAddress: async (req: Request, res: Response) => {
-    const { searchAddress } = req.body;
-    const resultHosts = await getRepository(hosts)
-      .createQueryBuilder("hosts")
-      .select(["hosts.address"])
-      .where("hosts.address like :searchKeyword", {
-        searchKeyword: `%${searchAddress}%`
-      })
+  getHosts: async (req: Request, res: Response) => {
+    const { address, date, guests } = req.body;
+    const resultHosts = await getRepository(Hosts)
+      .createQueryBuilder("Hosts")
+      .leftJoinAndSelect("Hosts.user", "users")
+      .where("Hosts.address like :searchCity", { searchCity: `%${address}%` })
+      .andWhere("Hosts.openDate <= :searchDate", { searchDate: date })
+      .andWhere("Hosts.closeDate >= :searchDate", { searchdate: date })
+      .andWhere("Hosts.guestMin <= :searchGuests", { searchGuests: guests })
+      .andWhere("Hosts.guestMax >= :searchGuests", { searchGuests: guests })
       .getMany();
+
     res.json(resultHosts);
   },
   quickSearchHost: async (req: Request, res: Response) => {
-    const { city, date, guests } = req.body;
-    const resultHosts = await getRepository(hosts)
+    const result = await getRepository(Hosts)
       .createQueryBuilder("hosts")
-      .where("hosts.address like :searchCity", { searchCity: `%${city}%` })
-      .andWhere("hosts.openDate <= :searchDate", { searchDate: date })
-      .andWhere("hosts.closeDate >= :searchDate", { searchdate: date })
-      .andWhere("hosts.guestMin <= :searchGuests", { searchGuests: guests })
-      .andWhere("hosts.guestMax >= :searchGuests", { searchGuests: guests })
+      .leftJoinAndSelect("hosts.Musers", "users")
       .getMany();
-
-    res.json(resultHosts);
+    res.json(result);
+    // const resultTraveler = await getRepository(Travelers)
+    //   .createQueryBuilder("travelers")
+    //   .leftJoinAndSelect("travelers.user", "user")
+    //   .getMany();
+    //res.json(resultTraveler);
   }
 };

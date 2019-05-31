@@ -4,7 +4,7 @@ import messageRouter from "./message";
 
 const router = express.Router();
 
-router.use("/mainView", hostRouter);
+router.use("/hosts", hostRouter);
 router.use("/message", messageRouter);
 
 export = router;

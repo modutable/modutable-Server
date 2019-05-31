@@ -1,7 +1,20 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column } from "typeorm";
+import {
+  Entity,
+  BaseEntity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToOne,
+  ManyToOne,
+  ManyToMany,
+  JoinTable,
+  OneToMany
+} from "typeorm";
+import { Users } from "./Users";
+import { Images } from "./Images";
+import { Reviews } from "./Reviews";
 
 @Entity()
-export class hosts extends BaseEntity {
+export class Hosts extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -26,9 +39,19 @@ export class hosts extends BaseEntity {
   @Column()
   deadline: Date;
   @Column()
-  user_id: number;
-  @Column()
   createdAt: Date;
   @Column()
   updatedAt: Date;
+
+  @ManyToOne(type => Users, user => user.hosts)
+  user: Users;
+
+  @ManyToMany(type => Users, user => user.Mhosts)
+  @JoinTable()
+  Musers: Users[];
+
+  @OneToMany(type => Images, images => images.host)
+  images: Images[];
+  @OneToMany(type => Reviews, review => review.host)
+  review: Reviews[];
 }
