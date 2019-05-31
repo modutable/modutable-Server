@@ -2,8 +2,6 @@ import { Request, Response } from "express";
 import "reflect-metadata";
 import { getRepository, Like, createQueryBuilder } from "typeorm";
 import { Hosts } from "../entity/Hosts";
-import { Users } from "../entity/Users";
-import { Travelers } from "../entity/Travelers";
 
 export = {
   getHosts: async (req: Request, res: Response) => {
@@ -32,16 +30,15 @@ export = {
     });
     res.json(resultHosts);
   },
-  quickSearchHost: async (req: Request, res: Response) => {
+  getOneHost: async (req: Request, res: Response) => {
+    const { id } = req.body;
     const result = await getRepository(Hosts)
-      .createQueryBuilder("hosts")
-      .leftJoinAndSelect("hosts.Musers", "users")
-      .getMany();
+      .createQueryBuilder("Hosts")
+      .leftJoinAndSelect("Hosts.user", "users")
+      .leftJoinAndSelect("Hosts.review", "reviews")
+      .leftJoinAndSelect("Hosts.images", "images")
+      .where("Hosts.id = :id", { id: id })
+      .getOne();
     res.json(result);
-    // const resultTraveler = await getRepository(Travelers)
-    //   .createQueryBuilder("travelers")
-    //   .leftJoinAndSelect("travelers.user", "user")
-    //   .getMany();
-    //res.json(resultTraveler);
   }
 };
