@@ -42,6 +42,10 @@ export class Hosts extends BaseEntity {
   createdAt: Date;
   @Column()
   updatedAt: Date;
+  @Column()
+  rating: number;
+  @Column()
+  mealsType: string;
 
   @ManyToOne(type => Users, user => user.hosts)
   user: Users;
