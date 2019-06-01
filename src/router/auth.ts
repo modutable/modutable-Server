@@ -6,14 +6,10 @@ const router = Router();
 export = function(passport: PassportStatic) {
   router.post(
     "/login_process",
-    passport.authenticate("local", function(err, user, info) {
-      console.log(1);
+    passport.authenticate("local", {
+      successRedirect: "/",
+      failureRedirect: "/test"
     })
   );
   return router;
 };
-
-/* {
-  successRedirect: "/",
-  failureRedirect: "/test"
-} */

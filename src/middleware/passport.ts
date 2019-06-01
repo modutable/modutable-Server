@@ -1,23 +1,28 @@
 import { Express } from "express";
 import passport from "passport";
 import passportLocal from "passport-local";
+import { publishToken, checkToken } from "./tokenparser";
 
 export = (app: Express) => {
-  var authData = {
-    email: "jiy",
-    password: "111",
-    nic: "test"
-  };
+  var authData = { test: 1 };
   var LocalStrategy = passportLocal.Strategy;
   app.use(passport.initialize());
   app.use(passport.session());
 
-  passport.serializeUser(function(user, done) {
-    console.log(user);
-    done(null, user);
+  passport.serializeUser(async function(user: object, done) {
+    console.log("로그인-->", user);
+    try {
+      const token = await publishToken(user);
+      console.log(token);
+      done(null, user);
+    } catch (error) {
+      console.log("error!!!");
+      done(error);
+    }
   });
   passport.deserializeUser(function(id, done) {
-    console.log(id);
+    /* 토큰 확인 */
+    console.log("미들---->", id);
     done(null, authData);
   });
 
@@ -28,10 +33,13 @@ export = (app: Express) => {
         passwordField: "pass"
       },
       function(username, password, done) {
+        /* 디비 where로 조회 */
         console.log(username);
-        if (username === authData.email) {
-          if (password === authData.password) {
-            return done(null, authData, {
+        const user = { email: "jiy", password: "111", nic: "test" };
+
+        if (username === user.email) {
+          if (password === user.password) {
+            return done(null, user, {
               message: "Welcome."
             });
           } else {
