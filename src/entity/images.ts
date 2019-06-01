@@ -15,8 +15,6 @@ export class Images extends BaseEntity {
 
   @Column()
   url: string;
-  @Column()
-  host_id: number;
   @ManyToOne(type => Hosts, hosts => hosts.images)
   host: Hosts;
 }

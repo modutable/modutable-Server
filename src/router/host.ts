@@ -4,6 +4,6 @@ import hostController from "../controller/host";
 const router = express.Router();
 
 router.get("/", hostController.getHosts);
-router.get("/test", hostController.quickSearchHost);
+router.get("/detail", hostController.getOneHost);
 
 export = router;
