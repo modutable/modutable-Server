@@ -1,8 +1,8 @@
 import * as jwt from "jsonwebtoken";
 import secret from "../secret";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, response } from "express";
 
-var options = { expiresIn: "7d", issuer: "inyongTest", subject: "userInfo" };
+var options = { expiresIn: "7d" };
 
 export const publishToken = (userInfo: Object) => {
   return new Promise((resolve, reject) => {
@@ -12,16 +12,27 @@ export const publishToken = (userInfo: Object) => {
   });
 };
 
-export const checkToken = (req: Request, res: Response, next: NextFunction) => {
-  return new Promise((resolve, reject) => {
-    const token = req.headers["x-access-token"] || req.body.token;
-    if (!token) {
-      resolve({ loginCheck: false, message: "not token" });
-    }
-    jwt.verify(token, secret.salt, (err: any, decoded: any) => {
-      err === null
-        ? resolve({ loginCheck: true, message: "success" })
-        : reject(err);
-    });
-  });
+export const checkToken = (req: any, res: Response, next: NextFunction) => {
+  if (req.path === "/login_process" || req.path === "/sendToken") {
+    next();
+  } else {
+    const token = req.headers["authorization"] || req.body.token;
+    new Promise((resolve, reject) => {
+      if (!token) {
+        reject("다시 로그인 시도를 해주세요.");
+      } else {
+        jwt.verify(token, secret.salt, (err: any, decoded: any) => {
+          err === null ? resolve(decoded) : reject(err);
+        });
+      }
+    })
+      .then((data: any) => {
+        req.userInfo = data;
+
+        next();
+      })
+      .catch(error => {
+        res.json(error);
+      });
+  }
 };

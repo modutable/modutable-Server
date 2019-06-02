@@ -12,6 +12,7 @@ const app = express();
 ORMConnect();
 app.use(cors());
 app.use(express.json());
+
 app.use(
   session({
     secret: "asdfqwer",
@@ -25,7 +26,6 @@ const authRouter = auth(passport);
 
 app.use(authRouter);
 app.use(router);
-
 app.listen(3000, () => {
   console.log("server start");
 });
