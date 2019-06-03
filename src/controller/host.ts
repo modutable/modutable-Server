@@ -5,6 +5,8 @@ import { Hosts } from "../entity/Hosts";
 
 export = {
   getHosts: async (req: Request, res: Response) => {
+    console.log("host----->", req.user);
+
     const { address, date, guests } = req.body;
     const hosts = await getRepository(Hosts)
       .createQueryBuilder("Hosts")

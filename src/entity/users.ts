@@ -3,7 +3,6 @@ import {
   BaseEntity,
   PrimaryGeneratedColumn,
   Column,
-  Double,
   OneToMany,
   ManyToMany,
   JoinTable
@@ -18,19 +17,19 @@ export class Users extends BaseEntity {
   @Column()
   firstName: string;
   @Column()
-  lastName: Date;
+  lastName: string;
   @Column()
-  address: Date;
+  address: string;
   @Column()
-  email: Date;
+  email: string;
   @Column()
-  password: number;
+  password: string;
   @Column()
-  birthday: number;
+  birthday: Date;
   @Column()
-  createdAt: number;
+  createdAt: Date;
   @Column()
-  updatedAt: number;
+  updatedAt: Date;
   @Column()
   profile: string;
 
