@@ -1,6 +1,8 @@
 import { Router, Request, Response } from "express";
 import { PassportStatic } from "passport";
 import SignUpController from "../controller/users";
+import { publishToken } from "../middleware/tokenparser";
+import userController from "../controller/users";
 
 const router = Router();
 
@@ -12,9 +14,8 @@ export = function(passport: PassportStatic) {
       failureRedirect: "/test"
     })
   );
-  router.get("/sendToken", function(req: any, res: Response) {
-    res.json(req.user);
-  });
+  router.post("/sendToken", userController.Login);
+  router.get("/test", userController.FailLogin);
   router.post("/signUp", SignUpController.SignUp);
   return router;
 };

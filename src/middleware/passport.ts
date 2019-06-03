@@ -1,7 +1,10 @@
 import { Express } from "express";
 import passport from "passport";
 import passportLocal from "passport-local";
-import { publishToken, checkToken } from "./tokenparser";
+import "reflect-metadata";
+import { getRepository } from "typeorm";
+import { Users } from "../entity/Users";
+import bcrypt from "bcrypt";
 
 export = (app: Express) => {
   var LocalStrategy = passportLocal.Strategy;
@@ -9,46 +12,43 @@ export = (app: Express) => {
 
   app.use(passport.initialize());
   app.use(passport.session());
-  passport.serializeUser(async function(user: Object, done) {
-    console.log("로그인-->", user);
-    try {
-      const token = await publishToken(user);
-      done(null, token);
-    } catch (error) {
-      done(error);
-    }
+  passport.serializeUser(async function(user, done) {
+    done(null, 1);
+    console.log(user);
   });
-  passport.deserializeUser(function(token, done) {
-    console.log(token);
-    done(null, token);
+  passport.deserializeUser(function(user, done) {
+    console.log("-->", user);
+    done(null, user);
   });
 
   passport.use(
+    "local",
     new LocalStrategy(
       {
-        usernameField: "email",
-        passwordField: "pass"
+        usernameField: "Email",
+        passwordField: "password",
+        session: true
       },
-      function(username, password, done) {
+      async (username, password, done) => {
+        done(null, 111);
         /* 디비 where로 조회 */
-        console.log(username);
-        const user = { email: "jiy", password: "111", nic: "test" };
-
-        if (username === user.email) {
-          if (password === user.password) {
-            return done(null, user, {
-              message: "Welcome."
-            });
+        /* console.log(username);
+        const result = await getRepository(Users)
+          .createQueryBuilder("Users")
+          .where("Users.email = :email", { email: username })
+          .getOne();
+        if (result) {
+          const userJSON = JSON.parse(JSON.stringify(result));
+          const hashPass = userJSON.password;
+          const flag = await bcrypt.compare(password, hashPass);
+          if (flag) {
+            done(null, userJSON);
           } else {
-            return done(null, false, {
-              message: "Incorrect password."
-            });
+            done(null, false);
           }
         } else {
-          return done(null, false, {
-            message: "Incorrect username."
-          });
-        }
+          done(null, false);
+        } */
       }
     )
   );

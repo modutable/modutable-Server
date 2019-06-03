@@ -26,6 +26,6 @@ const authRouter = auth(passport);
 
 app.use(authRouter);
 app.use(router);
-app.listen(3000, () => {
+app.listen(3001, () => {
   console.log("server start");
 });
