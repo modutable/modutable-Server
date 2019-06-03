@@ -3,22 +3,22 @@ import "reflect-metadata";
 import { getRepository, Like } from "typeorm";
 import { Users } from "../entity/Users";
 import bcrypt from "bcrypt";
+import secret from "../secret";
 
 export = {
   SignUp: async (req: Request, res: Response) => {
-    console.log(req.body);
     var birthday = `${req.body.year}-${req.body.month}-${req.body.day}`;
     const user = new Users();
     user.firstName = req.body.firstName;
     user.lastName = req.body.lastName;
     user.address = req.body.city;
     user.email = req.body.Email;
-    user.password = req.body.password;
+    user.password = await hasingPassword(req.body.password);
     user.birthday = new Date(birthday);
     user.createdAt = new Date();
     user.updatedAt = new Date();
     user.profile = "/init.png";
-
+    console.log(user);
     try {
       await getRepository(Users)
         .createQueryBuilder("users")
@@ -32,6 +32,10 @@ export = {
   }
 };
 
-function hasingPassword(password: string): String {
-  return "test";
+async function hasingPassword(password: string): Promise<string> {
+  const salt = await bcrypt.genSalt(10);
+  const hashValue = await bcrypt.hash(password, salt);
+
+  //const flag = await bcrypt.compare("1q2w3e4", hashValue);
+  return hashValue;
 }
