@@ -5,9 +5,10 @@ import { publishToken, checkToken } from "./tokenparser";
 
 export = (app: Express) => {
   var LocalStrategy = passportLocal.Strategy;
+  var FacebookStrategy = require("passport-facebook").Strategy;
+
   app.use(passport.initialize());
   app.use(passport.session());
-  app.use(checkToken);
   passport.serializeUser(async function(user: Object, done) {
     console.log("로그인-->", user);
     try {
@@ -50,6 +51,32 @@ export = (app: Express) => {
         }
       }
     )
+  );
+  var facebookCredentials = require("../../secret/facebook.json");
+  facebookCredentials.profileFields = ["id", "emails", "name", "displayName"];
+  passport.use(
+    new FacebookStrategy(facebookCredentials, function(
+      accessToken: any,
+      refreshToken: any,
+      profile: any,
+      done: any
+    ) {
+      console.log("FacebookStrategy", accessToken, refreshToken, profile);
+      var email = profile.emails[0].value;
+    })
+  );
+  app.get(
+    "/auth/facebook",
+    passport.authenticate("facebook", {
+      scope: "email"
+    })
+  );
+  app.get(
+    "/auth/facebook/callback",
+    passport.authenticate("facebook", {
+      successRedirect: "/",
+      failureRedirect: "/login_process"
+    })
   );
   return passport;
 };

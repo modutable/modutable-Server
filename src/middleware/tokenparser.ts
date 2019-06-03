@@ -13,26 +13,20 @@ export const publishToken = (userInfo: Object) => {
 };
 
 export const checkToken = (req: any, res: Response, next: NextFunction) => {
-  if (req.path === "/login_process" || req.path === "/sendToken") {
-    next();
-  } else {
-    const token = req.headers["authorization"] || req.body.token;
-    new Promise((resolve, reject) => {
-      if (!token) {
-        reject("다시 로그인 시도를 해주세요.");
-      } else {
-        jwt.verify(token, secret.salt, (err: any, decoded: any) => {
-          err === null ? resolve(decoded) : reject(err);
-        });
-      }
-    })
-      .then((data: any) => {
-        req.userInfo = data;
-
-        next();
-      })
-      .catch(error => {
-        res.json(error);
+  const token = req.headers["authorization"];
+  new Promise((resolve, reject) => {
+    if (!token) {
+      reject("다시 로그인 시도를 해주세요.");
+    } else {
+      jwt.verify(token, secret.salt, (err: any, decoded: any) => {
+        err === null ? resolve(decoded) : reject(err);
       });
-  }
+    }
+  })
+    .then((data: any) => {
+      next();
+    })
+    .catch(error => {
+      res.json(error);
+    });
 };
