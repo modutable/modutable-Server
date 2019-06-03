@@ -3,7 +3,6 @@ import "reflect-metadata";
 import { getRepository, Like } from "typeorm";
 import { Users } from "../entity/Users";
 import bcrypt from "bcrypt";
-import secret from "../secret";
 
 export = {
   SignUp: async (req: Request, res: Response) => {
