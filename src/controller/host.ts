@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import "reflect-metadata";
-import { getRepository, Like, createQueryBuilder } from "typeorm";
+import { getRepository } from "typeorm";
 import { Hosts } from "../entity/Hosts";
 
 export = {
