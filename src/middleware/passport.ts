@@ -38,7 +38,6 @@ export = (app: Express) => {
           const hashPass = userJSON.password;
           const flag = await bcrypt.compare(password, hashPass);
           if (flag) {
-            console.log;
             done(null, userJSON);
           } else {
             done(null, false);
@@ -50,7 +49,13 @@ export = (app: Express) => {
     )
   );
   var facebookCredentials = require("../../secret/facebook.json");
-  facebookCredentials.profileFields = ["id", "emails", "name", "displayName"];
+  facebookCredentials.profileFields = [
+    "id",
+    "emails",
+    "name",
+    "displayName",
+    "photos"
+  ];
   passport.use(
     new FacebookStrategy(facebookCredentials, function(
       accessToken: any,
@@ -58,8 +63,15 @@ export = (app: Express) => {
       profile: any,
       done: any
     ) {
-      console.log("FacebookStrategy", accessToken, refreshToken, profile);
-      var email = profile.emails[0].value;
+      var { id, name, emails, photos } = profile;
+      var obj: any = {
+        id,
+        firstName: name.givenName,
+        lastName: name.familyName,
+        email: emails[0].value,
+        profile: photos[0].value
+      };
+      done(null, obj);
     })
   );
   return passport;

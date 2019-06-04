@@ -30,14 +30,17 @@ export = {
     res.json({ message: "great!" });
   },
   Login: async (req: any, res: Response) => {
-    var user = { test: 1 };
-    const result = await getRepository(Users)
-      .createQueryBuilder("Users")
-      .where("Users.email = :email", { email: "jiy8319@gmail.com" })
-      .getOne();
     try {
-      const token = await publishToken(user);
+      const token = await publishToken(req.user);
       res.json(token);
+    } catch (error) {
+      res.status(501).json("fail making token");
+    }
+  },
+  SotialLogin: async (req: any, res: Response) => {
+    try {
+      const token = await publishToken(req.user);
+      res.redirect("/auth/facebook?token=" + token);
     } catch (error) {
       res.status(501).json("fail making token");
     }

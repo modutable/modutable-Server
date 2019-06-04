@@ -10,24 +10,24 @@ export = function(passport: PassportStatic) {
   router.get(
     "/login_process",
     passport.authenticate("local", {
-      successRedirect: "/sendToken",
-      failureRedirect: "/test"
+      successRedirect: "/auth/sendToken",
+      failureRedirect: "/auth/test"
     })
   );
-  router.get(
-    "/facebook",
+  router.get("/facebook", function(req, res) {
     passport.authenticate("facebook", {
       scope: "email"
-    })
-  );
+    })(req, res);
+  });
   router.get(
     "/facebook/callback",
     passport.authenticate("facebook", {
-      successRedirect: "/",
-      failureRedirect: "auth/login_process"
+      successRedirect: "/auth/sendSotialToken",
+      failureRedirect: "/auth/test"
     })
   );
   router.get("/sendToken", userController.Login);
+  router.get("/sendSotialToken", userController.SotialLogin);
   router.get("/test", userController.FailLogin);
   router.post("/signUp", SignUpController.SignUp);
 
