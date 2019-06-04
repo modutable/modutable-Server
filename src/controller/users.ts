@@ -38,9 +38,10 @@ export = {
     }
   },
   SotialLogin: async (req: any, res: Response) => {
+    console.log("-->", req.user);
     try {
       const token = await publishToken(req.user);
-      res.redirect("/auth/facebook?token=" + token);
+      //res.redirect("/auth/sotial?token=" + token);
     } catch (error) {
       res.status(501).json("fail making token");
     }

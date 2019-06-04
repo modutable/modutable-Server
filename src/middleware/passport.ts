@@ -9,6 +9,7 @@ import bcrypt from "bcrypt";
 export = (app: Express) => {
   var LocalStrategy = passportLocal.Strategy;
   var FacebookStrategy = require("passport-facebook").Strategy;
+  var GoogleStrategy = require("passport-google-oauth2").Strategy;
 
   app.use(passport.initialize());
   app.use(passport.session());
@@ -58,6 +59,35 @@ export = (app: Express) => {
   ];
   passport.use(
     new FacebookStrategy(facebookCredentials, function(
+      req: any,
+      accessToken: any,
+      refreshToken: any,
+      profile: any,
+      done: any
+    ) {
+      var { id, name, emails, photos } = profile;
+      var obj: any = {
+        id,
+        firstName: name.givenName,
+        lastName: name.familyName,
+        email: emails[0].value,
+        profile: photos[0].value
+      };
+      done(null, obj);
+    })
+  );
+  var googleCredentials = require("../../secret/google.json");
+  googleCredentials.profileFields = [
+    "id",
+    "email",
+    "emails",
+    "name",
+    "displayName",
+    "photos"
+  ];
+  passport.use(
+    new GoogleStrategy(googleCredentials, function(
+      req: any,
       accessToken: any,
       refreshToken: any,
       profile: any,

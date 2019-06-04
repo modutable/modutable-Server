@@ -1,7 +1,6 @@
 import { Router, Request, Response } from "express";
 import { PassportStatic } from "passport";
 import SignUpController from "../controller/users";
-import { publishToken } from "../middleware/tokenparser";
 import userController from "../controller/users";
 
 const router = Router();
@@ -22,6 +21,22 @@ export = function(passport: PassportStatic) {
   router.get(
     "/facebook/callback",
     passport.authenticate("facebook", {
+      successRedirect: "/auth/sendSotialToken",
+      failureRedirect: "/auth/test"
+    })
+  );
+  router.get("/google", function(req, res) {
+    passport.authenticate("google", {
+      scope: [
+        "https://www.googleapis.com/auth/plus.login",
+        "https://www.googleapis.com/auth/plus.profile.emails.read",
+        "email"
+      ]
+    })(req, res);
+  });
+  router.get(
+    "/google/callback",
+    passport.authenticate("google", {
       successRedirect: "/auth/sendSotialToken",
       failureRedirect: "/auth/test"
     })
