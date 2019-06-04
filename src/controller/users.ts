@@ -27,11 +27,10 @@ export = {
     } catch (error) {
       res.status(501).json("fail Sign Up error message :" + error);
     }
-    res.json({ test: 1 });
+    res.json({ message: "great!" });
   },
   Login: async (req: any, res: Response) => {
     var user = { test: 1 };
-    console.log("1--->", req.user);
     const result = await getRepository(Users)
       .createQueryBuilder("Users")
       .where("Users.email = :email", { email: "jiy8319@gmail.com" })
