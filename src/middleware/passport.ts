@@ -13,11 +13,9 @@ export = (app: Express) => {
   app.use(passport.initialize());
   app.use(passport.session());
   passport.serializeUser(async function(user, done) {
-    done(null, 1);
-    console.log(user);
+    done(null, user);
   });
   passport.deserializeUser(function(user, done) {
-    console.log("-->", user);
     done(null, user);
   });
 
@@ -30,9 +28,7 @@ export = (app: Express) => {
         session: true
       },
       async (username, password, done) => {
-        done(null, 111);
         /* 디비 where로 조회 */
-        /* console.log(username);
         const result = await getRepository(Users)
           .createQueryBuilder("Users")
           .where("Users.email = :email", { email: username })
@@ -42,13 +38,14 @@ export = (app: Express) => {
           const hashPass = userJSON.password;
           const flag = await bcrypt.compare(password, hashPass);
           if (flag) {
+            console.log;
             done(null, userJSON);
           } else {
             done(null, false);
           }
         } else {
           done(null, false);
-        } */
+        }
       }
     )
   );
@@ -63,19 +60,6 @@ export = (app: Express) => {
     ) {
       console.log("FacebookStrategy", accessToken, refreshToken, profile);
       var email = profile.emails[0].value;
-    })
-  );
-  app.get(
-    "/auth/facebook",
-    passport.authenticate("facebook", {
-      scope: "email"
-    })
-  );
-  app.get(
-    "/auth/facebook/callback",
-    passport.authenticate("facebook", {
-      successRedirect: "/",
-      failureRedirect: "/login_process"
     })
   );
   return passport;

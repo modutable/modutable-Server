@@ -4,7 +4,6 @@ import { getRepository, Like } from "typeorm";
 import { Users } from "../entity/Users";
 import { publishToken } from "../middleware/tokenparser";
 import bcrypt from "bcrypt";
-import { getPriority } from "os";
 
 export = {
   SignUp: async (req: Request, res: Response) => {
@@ -31,26 +30,8 @@ export = {
     res.json({ test: 1 });
   },
   Login: async (req: any, res: Response) => {
-    const { Email, password } = req.body;
-    const result = await getRepository(Users)
-      .createQueryBuilder("Users")
-      .where("Users.email = :email", { email: Email })
-      .getOne();
-    if (result) {
-      const userJSON = JSON.parse(JSON.stringify(result));
-      const hashPass = userJSON.password;
-      const flag = await bcrypt.compare(password, hashPass);
-      if (flag) {
-        const token = await publishToken(userJSON);
-        res.json(token);
-      } else {
-        res.json("no password");
-      }
-    } else {
-      res.json("no ID");
-    }
-    /* var user = { test: 1 };
-    console.log("--->", req.user);
+    var user = { test: 1 };
+    console.log("1--->", req.user);
     const result = await getRepository(Users)
       .createQueryBuilder("Users")
       .where("Users.email = :email", { email: "jiy8319@gmail.com" })
@@ -60,7 +41,7 @@ export = {
       res.json(token);
     } catch (error) {
       res.status(501).json("fail making token");
-    } */
+    }
   },
   FailLogin: async (req: Request, res: Response) => {
     res.json("fail Login");
