@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, response } from "express";
 import "reflect-metadata";
 import { getRepository, Like } from "typeorm";
 import { Users } from "../entity/Users";
@@ -12,7 +12,7 @@ export = {
     user.firstName = req.body.firstName;
     user.lastName = req.body.lastName;
     user.address = req.body.city;
-    user.email = req.body.email;
+    user.email = req.body.Email;
     user.password = await hasingPassword(req.body.password);
     var birthday = `${req.body.year}-${req.body.month}-${req.body.day}`;
     user.birthday = new Date(birthday);
@@ -24,11 +24,9 @@ export = {
       res.json({ message: "already" });
     } else {
       try {
-        insertUser(user);
-        const token = await publishToken(user);
-        res.redirect(
-          sercret.clientRequestURL + "/sotialTokenQuery?token=" + token
-        );
+        await insertUser(user);
+        const token = await publishToken(JSON.parse(JSON.stringify(user)));
+        res.json(token);
       } catch (error) {
         res.status(501).json("fail Sign Up error message :" + error);
       }
@@ -50,15 +48,12 @@ export = {
       user.lastName = req.user.lastName;
       user.email = req.user.Email;
       user.profile = req.user.profile;
-      insertUser(user);
+      await insertUser(user);
       result = user;
     }
     try {
-      console.log(result);
-      const token = await publishToken(result);
-      res.redirect(
-        sercret.clientRequestURL + "/sotialTokenQuery?token=" + token
-      );
+      const token = await publishToken(JSON.parse(JSON.stringify(result)));
+      redirect(res, token);
     } catch (error) {
       res.status(501).json("fail making token");
     }
@@ -67,7 +62,9 @@ export = {
     res.json("fail Login");
   }
 };
-
+function redirect(res: Response, token: any) {
+  res.redirect(sercret.clientRequestURL + "/sotialTokenQuery?token=" + token);
+}
 async function hasingPassword(password: string): Promise<string> {
   const hashValue = await bcrypt.hash(password, 10);
   return hashValue;
