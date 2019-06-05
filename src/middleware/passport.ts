@@ -70,7 +70,7 @@ export = (app: Express) => {
         id,
         firstName: name.givenName,
         lastName: name.familyName,
-        email: emails[0].value,
+        Email: emails[0].value,
         profile: photos[0].value
       };
       done(null, obj);
@@ -98,7 +98,7 @@ export = (app: Express) => {
         id,
         firstName: name.givenName,
         lastName: name.familyName,
-        email: emails[0].value,
+        Email: emails[0].value,
         profile: photos[0].value
       };
       done(null, obj);

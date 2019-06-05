@@ -7,12 +7,13 @@ import { ORMConnect } from "./database";
 import session from "express-session";
 import middlewarePassport from "./middleware/passport";
 import auth from "./router/auth";
+import secret from "./secret";
 
 const app = express();
 ORMConnect();
 app.use(
   cors({
-    origin: "http://localhost:3000", // frontend base url
+    origin: secret.clientRequestURL, // frontend base url
     credentials: true
   })
 );
