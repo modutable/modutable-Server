@@ -18,8 +18,10 @@ export class Preparefoods extends BaseEntity {
   @Column()
   state: string;
 
-  @OneToOne(type => Users, user => user.event)
+  @ManyToOne(type => Users, user => user.event)
   user: Users;
+  @Column()
+  userId: number;
   @ManyToOne(type => Events, event => event.preparefoods)
   event: Users;
 

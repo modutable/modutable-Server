@@ -1,12 +1,14 @@
 import { Request, Response } from "express";
 import "reflect-metadata";
-import { getRepository } from "typeorm";
+import { getRepository, createQueryBuilder } from "typeorm";
 import { Events } from "../entity/Events";
+import { Events_Users } from "../entity/Events_Users";
+import { Users } from "../entity/Users";
+import { Preparefoods } from "../entity/Preparefoods";
 
 export = {
   getEvents: async (req: Request, res: Response) => {
     const { address, date, guests } = req.body;
-    console.log(address, date, guests);
     const events = await getRepository(Events)
       .createQueryBuilder("Events")
       .leftJoinAndSelect("Events.user", "users")
@@ -38,5 +40,34 @@ export = {
       .where("Events.id = :id", { id: id })
       .getOne();
     res.json(result);
+  },
+  bookEvent: async (req: Request, res: Response) => {
+    const { userId, eventId, foodNames } = req.body;
+
+    const event = new Events();
+    event.id = eventId;
+    const user = new Users();
+    user.id = userId;
+    const event_user = new Events_Users();
+    event_user.event = JSON.parse(JSON.stringify(event));
+    event_user.user = JSON.parse(JSON.stringify(user));
+    await getRepository(Events_Users)
+      .createQueryBuilder()
+      .insert()
+      .values(event_user)
+      .execute();
+
+    for (var food of foodNames) {
+      await createQueryBuilder()
+        .update(Preparefoods)
+        .set({
+          state: "신청",
+          userId: userId
+        })
+        .where("eventId = :id", { id: eventId })
+        .andWhere("name = :name", { name: food })
+        .execute();
+    }
+    res.json("result");
   }
 };
