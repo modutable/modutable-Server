@@ -6,7 +6,8 @@
   "scripts": {
     "start": "nodemon --exec ts-node src/server.ts",
     "dev": "nodemon src/server.ts",
-    "build": "tsc -p ."
+    "build": "tsc -p .",
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js"
   },
   "keywords": [],
   "author": "",
@@ -40,7 +41,7 @@
     "nodemon": "^1.19.1",
     "reflect-metadata": "^0.1.13",
     "ts-node": "^8.2.0",
-    "typeorm": "^0.2.17",
+    "typeorm": "^0.3.0-alpha.23",
     "typescript": "^3.4.5"
   }
 }

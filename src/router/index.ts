@@ -1,10 +1,10 @@
 import express, { Request, Response, NextFunction } from "express";
-import hostRouter from "./host";
+import eventsRouter from "./events";
 import messageRouter from "./message";
 
 const router = express.Router();
 
-router.use("/hosts", hostRouter);
+router.use("/events", eventsRouter);
 router.use("/message", messageRouter);
 
 export = router;

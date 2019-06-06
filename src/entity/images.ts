@@ -6,7 +6,7 @@ import {
   Double,
   ManyToOne
 } from "typeorm";
-import { Hosts } from "./Hosts";
+import { Events } from "./Events";
 
 @Entity()
 export class Images extends BaseEntity {
@@ -15,6 +15,6 @@ export class Images extends BaseEntity {
 
   @Column()
   url: string;
-  @ManyToOne(type => Hosts, hosts => hosts.images)
-  host: Hosts;
+  @ManyToOne(type => Events, Events => Events.images)
+  event: Events;
 }

@@ -5,10 +5,13 @@ import {
   Column,
   OneToMany,
   ManyToMany,
-  JoinTable
+  JoinTable,
+  OneToOne
 } from "typeorm";
-import { Hosts } from "./Hosts";
-import { Travelers } from "./Travelers";
+import { Events } from "./Events";
+import { Users_travelers } from "./Users_travelers";
+import { Preparefoods } from "./Preparefoods";
+import { Messages } from "./Messages";
 @Entity()
 export class Users extends BaseEntity {
   @PrimaryGeneratedColumn()
@@ -31,14 +34,22 @@ export class Users extends BaseEntity {
   @Column()
   updatedAt: Date;
   @Column()
-  profile: string;
+  profileImg: string;
 
-  @OneToMany(type => Hosts, hosts => hosts.user)
-  hosts: Hosts[];
-  @OneToMany(type => Travelers, travelers => travelers.user)
-  Travelers: Travelers[];
+  @OneToMany(type => Events, Events => Events.user)
+  event: Events[];
+  @OneToOne(type => Users_travelers, travelers => travelers.user)
+  Travelers: Users_travelers[];
 
-  @ManyToMany(type => Hosts, hosts => hosts.Musers)
+  @ManyToMany(type => Events, Events => Events.Musers)
   @JoinTable()
-  Mhosts: Hosts[];
+  Mhosts: Events[];
+
+  // @OneToOne(type => Preparefoods, Preparefoods => Preparefoods.userId)
+  // preparefoods: Preparefoods;
+
+  @OneToOne(type => Messages, message => message.sendUser)
+  sendmessage: Messages;
+  @OneToOne(type => Messages, message => message.getUser)
+  getmessage: Messages;
 }

@@ -18,7 +18,7 @@ export = {
     user.birthday = new Date(birthday);
     user.createdAt = new Date();
     user.updatedAt = new Date();
-    user.profile = "/init.png";
+    user.profileImg = "/init.png";
     var result = await checkUser(user);
     if (result !== undefined) {
       res.json({ message: "already" });
@@ -47,7 +47,7 @@ export = {
       user.firstName = req.user.firstName;
       user.lastName = req.user.lastName;
       user.email = req.user.Email;
-      user.profile = req.user.profile;
+      user.profileImg = req.user.profile;
       await insertUser(user);
       result = user;
     }

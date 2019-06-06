@@ -3,23 +3,26 @@ import {
   BaseEntity,
   PrimaryGeneratedColumn,
   Column,
+  ManyToOne,
   OneToOne
 } from "typeorm";
 import { Users } from "./Users";
+
 @Entity()
-export class Messages extends BaseEntity {
+export class Users_travelers extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(type => Users, user => user.sendmessage)
-  sendUser: Users;
-  @OneToOne(type => Users, user => user.getmessage)
-  getUser: Users;
-
   @Column()
-  message: string;
+  legion: string;
+  @Column()
+  startDate: Date;
+  @Column()
+  endDate: Date;
   @Column()
   createdAt: Date;
   @Column()
   updatedAt: Date;
+  @OneToOne(type => Users, user => user.Travelers)
+  user: Users[];
 }
