@@ -11,10 +11,10 @@ import {
 } from "typeorm";
 import { Users } from "./Users";
 import { Images } from "./Images";
-import { Reviews } from "./Reviews";
+import { Preparefoods } from "./Preparefoods";
 
 @Entity()
-export class Hosts extends BaseEntity {
+export class Events extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -23,19 +23,21 @@ export class Hosts extends BaseEntity {
   @Column()
   address: string;
   @Column()
-  openDate: Date;
-  @Column()
-  CloseDate: Date;
-  @Column()
   guestMin: number;
   @Column()
   guestMax: number;
   @Column()
   guests: number;
   @Column()
+  openDate: Date;
+  @Column()
   title: string;
   @Column()
   description: string;
+  @Column()
+  experience: string;
+  @Column()
+  mealsType: string;
   @Column()
   deadline: Date;
   @Column()
@@ -44,18 +46,17 @@ export class Hosts extends BaseEntity {
   updatedAt: Date;
   @Column()
   rating: number;
-  @Column()
-  mealsType: string;
 
-  @ManyToOne(type => Users, user => user.hosts)
+  @ManyToOne(type => Users, user => user.event)
   user: Users;
 
   @ManyToMany(type => Users, user => user.Mhosts)
   @JoinTable()
   Musers: Users[];
 
-  @OneToMany(type => Images, images => images.host)
+  @OneToMany(type => Images, images => images.event)
   images: Images[];
-  @OneToMany(type => Reviews, review => review.host)
-  review: Reviews[];
+
+  @OneToMany(type => Preparefoods, Preparefoods => Preparefoods.event)
+  preparefoods: Preparefoods[];
 }
