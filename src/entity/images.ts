@@ -3,7 +3,6 @@ import {
   BaseEntity,
   PrimaryGeneratedColumn,
   Column,
-  Double,
   ManyToOne
 } from "typeorm";
 import { Events } from "./Events";
@@ -17,4 +16,6 @@ export class Images extends BaseEntity {
   url: string;
   @ManyToOne(type => Events, Events => Events.images)
   event: Events;
+  @Column()
+  eventId: Number;
 }

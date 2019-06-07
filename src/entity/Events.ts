@@ -50,7 +50,8 @@ export class Events extends BaseEntity {
 
   @ManyToOne(type => Users, user => user.event)
   user: Users;
-
+  @Column()
+  userId: Number;
   @OneToMany(type => Users, user => user.event)
   events_users: Events_Users[];
 

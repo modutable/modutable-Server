@@ -30,9 +30,9 @@ export class Events_Users extends BaseEntity {
   @Column()
   score: Number;
 
-  @ManyToOne(type => Users, user => user.event)
+  @ManyToOne(type => Users, user => user.events_users)
   user: Users;
 
-  @ManyToOne(type => Users, user => user.event)
+  @ManyToOne(type => Events, event => event.events_users)
   event: Events;
 }

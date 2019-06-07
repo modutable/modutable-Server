@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { PassportStatic } from "passport";
-import SignUpController from "../controller/users";
 import userController from "../controller/users";
+import { checkToken } from "../middleware/tokenparser";
 
 const router = Router();
 
@@ -44,7 +44,9 @@ export = function(passport: PassportStatic) {
   router.get("/sendToken", userController.Login);
   router.get("/sendSotialToken", userController.SotialLogin);
   router.get("/test", userController.FailLogin);
-  router.post("/signUp", SignUpController.SignUp);
+  router.post("/signUp", userController.SignUp);
+  router.post("/updateInfo", checkToken, userController.updateUserInfo);
+  router.get("/mypage", checkToken, userController.mypage);
 
   return router;
 };
