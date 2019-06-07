@@ -24,5 +24,5 @@ export class Users_travelers extends BaseEntity {
   @Column()
   updatedAt: Date;
   @OneToOne(type => Users, user => user.Travelers)
-  user: Users[];
+  user: Users;
 }

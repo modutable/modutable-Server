@@ -1,6 +1,6 @@
-import { Request, Response, response } from "express";
+import { Request, Response } from "express";
 import "reflect-metadata";
-import { getRepository, Like } from "typeorm";
+import { getRepository, createQueryBuilder } from "typeorm";
 import { Users } from "../entity/Users";
 import { publishToken } from "../middleware/tokenparser";
 import bcrypt from "bcrypt";
@@ -8,16 +8,8 @@ import sercret from "../secret";
 
 export = {
   SignUp: async (req: Request, res: Response) => {
-    const user = new Users();
-    user.firstName = req.body.firstName;
-    user.lastName = req.body.lastName;
-    user.address = req.body.city;
-    user.email = req.body.Email;
-    user.password = await hasingPassword(req.body.password);
-    var birthday = `${req.body.year}-${req.body.month}-${req.body.day}`;
-    user.birthday = new Date(birthday);
+    const user = await createUserClass(req);
     user.createdAt = new Date();
-    user.updatedAt = new Date();
     user.profileImg = "/init.png";
     var result = await checkUser(user);
     if (result !== undefined) {
@@ -60,10 +52,46 @@ export = {
   },
   FailLogin: async (req: Request, res: Response) => {
     res.json("fail Login");
+  },
+  updateUserInfo: async (req: Request, res: Response) => {
+    const { profileImg } = req.body;
+    const user = await createUserClass(req);
+    user.profileImg = profileImg;
+
+    await createQueryBuilder()
+      .update(Users)
+      .set(user)
+      .where("id = :id", { id: req.user.id })
+      .execute();
+    res.json("good~!update userInfo");
+  },
+  mypage: async (req: Request, res: Response) => {
+    const { user } = req;
+    const result = await getRepository(Users)
+      .createQueryBuilder("Users")
+      .leftJoinAndSelect("Users.events_users", "Events_Users")
+      .leftJoinAndSelect("Events_Users.event", "Events")
+      .leftJoinAndSelect("Events.preparefoods", "Preparefoods")
+      .where("Users.id = :id", { id: user.id })
+      .andWhere("Preparefoods.userId = :id", { id: user.id })
+      .getOne();
+    res.json(result);
   }
 };
 function redirect(res: Response, token: any) {
   res.redirect(sercret.clientRequestURL + "/sotialTokenQuery?token=" + token);
+}
+async function createUserClass(req: Request) {
+  const user = new Users();
+  user.firstName = req.body.firstName;
+  user.lastName = req.body.lastName;
+  user.address = req.body.city;
+  user.email = req.body.Email;
+  user.password = await hasingPassword(req.body.password);
+  var birthday = `${req.body.year}-${req.body.month}-${req.body.day}`;
+  user.birthday = new Date(birthday);
+  user.updatedAt = new Date();
+  return user;
 }
 async function hasingPassword(password: string): Promise<string> {
   const hashValue = await bcrypt.hash(password, 10);

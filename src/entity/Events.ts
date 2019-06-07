@@ -12,6 +12,7 @@ import {
 import { Users } from "./Users";
 import { Images } from "./Images";
 import { Preparefoods } from "./Preparefoods";
+import { Events_Users } from "./Events_Users";
 
 @Entity()
 export class Events extends BaseEntity {
@@ -49,10 +50,10 @@ export class Events extends BaseEntity {
 
   @ManyToOne(type => Users, user => user.event)
   user: Users;
-
-  @ManyToMany(type => Users, user => user.Mhosts)
-  @JoinTable()
-  Musers: Users[];
+  @Column()
+  userId: Number;
+  @OneToMany(type => Users, user => user.event)
+  events_users: Events_Users[];
 
   @OneToMany(type => Images, images => images.event)
   images: Images[];

@@ -12,6 +12,7 @@ import { Events } from "./Events";
 import { Users_travelers } from "./Users_travelers";
 import { Preparefoods } from "./Preparefoods";
 import { Messages } from "./Messages";
+import { Events_Users } from "./Events_Users";
 @Entity()
 export class Users extends BaseEntity {
   @PrimaryGeneratedColumn()
@@ -39,17 +40,16 @@ export class Users extends BaseEntity {
   @OneToMany(type => Events, Events => Events.user)
   event: Events[];
   @OneToOne(type => Users_travelers, travelers => travelers.user)
-  Travelers: Users_travelers[];
+  Travelers: Users_travelers;
 
-  @ManyToMany(type => Events, Events => Events.Musers)
-  @JoinTable()
-  Mhosts: Events[];
-
-  // @OneToOne(type => Preparefoods, Preparefoods => Preparefoods.userId)
-  // preparefoods: Preparefoods;
+  @OneToMany(type => Preparefoods, Preparefoods => Preparefoods.user)
+  preparefoods: Preparefoods[];
 
   @OneToOne(type => Messages, message => message.sendUser)
   sendmessage: Messages;
   @OneToOne(type => Messages, message => message.getUser)
   getmessage: Messages;
+
+  @OneToMany(type => Events_Users, Events_Users => Events_Users.user)
+  events_users: Events_Users[];
 }

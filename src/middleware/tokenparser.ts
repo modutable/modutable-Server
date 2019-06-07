@@ -24,6 +24,7 @@ export const checkToken = (req: any, res: Response, next: NextFunction) => {
     }
   })
     .then((data: any) => {
+      req.user = data;
       next();
     })
     .catch(error => {

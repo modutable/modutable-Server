@@ -21,7 +21,7 @@ app.use(express.json());
 
 app.use(
   session({
-    secret: "asdfqwer",
+    secret: secret.salt,
     resave: false,
     saveUninitialized: true
   })

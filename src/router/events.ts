@@ -1,9 +1,12 @@
-import express, { Request, Response, NextFunction } from "express";
-import hostController from "../controller/event";
+import express from "express";
+import eventController from "../controller/event";
 
 const router = express.Router();
 
-router.get("/", hostController.getEvents);
-router.get("/detail", hostController.getOneEvent);
+router.get("/", eventController.getEvents);
+router.get("/detail", eventController.getOneEvent);
+router.post("/bookevent", eventController.bookEvent);
+router.post("/createevent", eventController.createEvent);
+router.post("/updateevent", eventController.updateEvent);
 
 export = router;
