@@ -6,7 +6,7 @@ import { Events_Users } from "../entity/Events_Users";
 import { Users } from "../entity/Users";
 import { Preparefoods } from "../entity/Preparefoods";
 import { Images } from "../entity/Images";
-
+require("dotenv").config();
 export = {
   getEvents: async (req: Request, res: Response) => {
     const { address, date, guests } = req.body;

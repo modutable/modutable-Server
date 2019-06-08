@@ -5,7 +5,7 @@ import { Users } from "../entity/Users";
 import { publishToken } from "../middleware/tokenparser";
 import bcrypt from "bcrypt";
 import sercret from "../secret";
-
+require("dotenv").config();
 export = {
   SignUp: async (req: Request, res: Response) => {
     const user = await createUserClass(req);
@@ -79,7 +79,7 @@ export = {
   }
 };
 function redirect(res: Response, token: any) {
-  res.redirect(sercret.clientRequestURL + "/sotialTokenQuery?token=" + token);
+  res.redirect(process.env.CLIENT_URL + "/sotialTokenQuery?token=" + token);
 }
 async function createUserClass(req: Request) {
   const user = new Users();
