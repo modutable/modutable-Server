@@ -1,12 +1,13 @@
 import express from "express";
 import eventController from "../controller/event";
+import { checkToken } from "../middleware/tokenparser";
 
 const router = express.Router();
 
 router.get("/", eventController.getEvents);
-router.get("/detail", eventController.getOneEvent);
-router.post("/bookevent", eventController.bookEvent);
-router.post("/createevent", eventController.createEvent);
-router.post("/updateevent", eventController.updateEvent);
-
+router.get("/:id", eventController.getOneEvent);
+router.post("/book/:id", checkToken, eventController.bookEvent);
+router.post("/create", eventController.createEvent);
+router.post("/update/:id", eventController.updateEvent);
+router.post("/delete/:id", eventController.deleteEvent);
 export = router;

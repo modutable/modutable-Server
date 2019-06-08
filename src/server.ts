@@ -8,12 +8,13 @@ import session from "express-session";
 import middlewarePassport from "./middleware/passport";
 import auth from "./router/auth";
 import secret from "./secret";
+require("dotenv").config();
 
 const app = express();
 ORMConnect();
 app.use(
   cors({
-    origin: secret.clientRequestURL, // frontend base url
+    origin: process.env.CLIENT_URL, // frontend base url
     credentials: true
   })
 );
@@ -32,6 +33,6 @@ const authRouter = auth(passport);
 
 app.use("/auth", authRouter);
 app.use(router);
-app.listen(3001, () => {
-  console.log("server start");
+app.listen(process.env.PORT, () => {
+  console.log("server start Port :" + process.env.PORT);
 });
