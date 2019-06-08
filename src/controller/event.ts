@@ -32,7 +32,7 @@ export = {
     res.json(resultEvents);
   },
   getOneEvent: async (req: Request, res: Response) => {
-    const { id } = req.body;
+    const { id } = req.params;
     const result = await getRepository(Events)
       .createQueryBuilder("Events")
       .leftJoinAndSelect("Events.user", "users")
@@ -43,7 +43,9 @@ export = {
     res.json(result);
   },
   bookEvent: async (req: Request, res: Response) => {
-    const { userId, eventId, foodNames } = req.body;
+    const eventId = req.params.id;
+    const userId = req.user.id;
+    const { foodNames } = req.body;
 
     const event = new Events();
     event.id = eventId;
@@ -95,24 +97,25 @@ export = {
   },
   updateEvent: async (req: Request, res: Response) => {
     const event = setEventObj(req);
+    const eventId = req.params.id;
     const { images } = req.body;
 
     await createQueryBuilder()
       .update(Events)
       .set(event)
-      .where("id = :id", { id: 11 })
+      .where("id = :id", { id: eventId })
       .execute();
 
     await createQueryBuilder()
       .delete()
       .from(Images)
-      .where("eventId = :id", { id: 11 })
+      .where("eventId = :id", { id: eventId })
       .execute();
 
     for (var image of images) {
       var imageClass = new Images();
       imageClass.url = image;
-      imageClass.eventId = 11;
+      imageClass.eventId = eventId;
       await getRepository(Images)
         .createQueryBuilder()
         .insert()
@@ -120,6 +123,14 @@ export = {
         .execute();
     }
     res.json("test");
+  },
+  deleteEvent: async (req: Request, res: Response) => {
+    const { id } = req.params.id;
+    await getRepository(Events)
+      .createQueryBuilder()
+      .delete()
+      .where("id = :id", { id: id })
+      .execute();
   }
 };
 
@@ -134,9 +145,9 @@ function setEventObj(req: Request) {
     mealsType,
     experience,
     description,
-    deadline,
-    userId
+    deadline
   } = req.body;
+
   const event = new Events();
   event.phone = phone;
   event.address = address;
@@ -149,6 +160,6 @@ function setEventObj(req: Request) {
   event.mealsType = mealsType;
   event.deadline = deadline;
   event.updatedAt = new Date();
-  event.userId = userId;
+  event.userId = req.user.id;
   return event;
 }
