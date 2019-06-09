@@ -12,7 +12,7 @@ export = {
       }
     });
     let mailOptions = {
-      from: "ModuTable.com", // 발송 메일 주소 (위에서 작성한 gmail 계정 아이디)
+      from: "'InYong@moduTable.com <jiy8319@gmail.com>'", // 발송 메일 주소 (위에서 작성한 gmail 계정 아이디)
       to: req.user.email, // 수신 메일 주소
       subject: "You can change you Password!", // 제목
       html: `You can change your password by following the link below. \n<p>Click <a href="${
