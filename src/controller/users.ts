@@ -4,7 +4,6 @@ import { getRepository, createQueryBuilder } from "typeorm";
 import { Users } from "../entity/Users";
 import { publishToken } from "../middleware/tokenparser";
 import bcrypt from "bcrypt";
-import sercret from "../secret";
 require("dotenv").config();
 export = {
   SignUp: async (req: Request, res: Response) => {
@@ -56,6 +55,7 @@ export = {
   updateUserInfo: async (req: Request, res: Response) => {
     const { profileImg } = req.body;
     const user = await createUserClass(req);
+    /* user에서 원래 업데이트 하지 않기로 한 property는 잘 걸러야 함. */
     user.profileImg = profileImg;
 
     await createQueryBuilder()
