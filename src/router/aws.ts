@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import AWS from "aws-sdk";
 import multer from "multer";
 import multerS3 from "multer-s3";
@@ -27,8 +27,35 @@ router.get("/profile", (req: Request, res: Response) => {
 });
 router.post(
   "/profile",
-  upload.single("userfile"),
-  async (req: Request, res: Response) => {
+
+  async (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.params);
+    upload.single("userfile")(req, res, next);
+    // let encodedImage = JSON.parse(req.body).user_avatar;
+    // console.log(encodedImage);
+    // let decpdedImage = Buffer.from(encodedImage, "base64");
+    // var filePath = "test.jpg";
+    // var params = {
+    //   Body: decpdedImage,
+    //   Bucket: "modutable-images/profile",
+    //   Key: filePath
+    // };
+    // s3.upload(params, function(err: any, data: any) {
+    //   if (err) {
+    //     res.json(err);
+    //   } else {
+    //     let response = {
+    //       statusCode: 200,
+    //       headers: {
+    //         my_header: "my_value"
+    //       },
+    //       body: JSON.stringify(data),
+    //       isBase64Encoded: false
+    //     };
+    //     res.json(response);
+    //   }
+    // });
+
     res.json("successfull");
   }
 );
