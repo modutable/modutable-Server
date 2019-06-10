@@ -3,6 +3,7 @@ import AWS from "aws-sdk";
 import multer from "multer";
 import multerS3 from "multer-s3";
 import path from "path";
+import sharp from "sharp";
 
 const router = Router();
 AWS.config.loadFromPath(__dirname + "/../../awsconfig.json");
@@ -27,7 +28,7 @@ router.get("/profile", (req: Request, res: Response) => {
 router.post(
   "/profile",
   upload.single("userfile"),
-  (req: Request, res: Response) => {
+  async (req: Request, res: Response) => {
     res.json("successfull");
   }
 );
