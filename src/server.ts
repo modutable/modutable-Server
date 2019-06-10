@@ -8,6 +8,7 @@ import session from "express-session";
 import middlewarePassport from "./middleware/passport";
 import auth from "./router/auth";
 import secret from "./secret";
+
 require("dotenv").config();
 
 const app = express();
@@ -27,7 +28,6 @@ app.use(
     saveUninitialized: true
   })
 );
-
 var passport = middlewarePassport(app);
 const authRouter = auth(passport);
 
