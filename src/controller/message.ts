@@ -5,18 +5,15 @@ import { Users } from "../entity/Users";
 
 export = {
   save: async (data: any) => {
-    const toUserId = await getUserIdByEmail(data.to);
-    const fromUserId = await getUserIdByEmail(data.from);
+    const toUser = await getUserIdByEmail(data.to);
+    const fromUser = await getUserIdByEmail(data.from);
 
-    console.log(toUserId);
-    console.log(fromUserId);
     const newMessage = new Messages();
-    newMessage.sendUser = data.from;
-    newMessage.getUser = data.to;
+    newMessage.sendUserId = JSON.parse(JSON.stringify(fromUser)).id;
+    newMessage.getUserId = JSON.parse(JSON.stringify(toUser)).id;
     newMessage.message = data.message;
     newMessage.createdAt = new Date();
     newMessage.updatedAt = new Date();
-    console.log(newMessage);
     const result = await getRepository(Messages)
       .createQueryBuilder()
       .insert()

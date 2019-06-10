@@ -8,10 +8,8 @@ export = (socketServer: http.Server) => {
   io.on("connection", socket => {
     socket.on("login", function(data) {
       socket.join(data.email);
-      console.log(data);
     });
     socket.on("sendMessage", function(data) {
-      /* data => {to: '', from:'', message} */
       socket.to(data.to).emit("getMessage", data.message);
       messageController.save(data);
     });
