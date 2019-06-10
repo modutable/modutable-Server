@@ -13,8 +13,12 @@ export class Messages extends BaseEntity {
 
   @OneToOne(type => Users, user => user.sendmessage)
   sendUser: Users;
+  @Column()
+  sendUserId: Number;
   @OneToOne(type => Users, user => user.getmessage)
   getUser: Users;
+  @Column()
+  getUserId: Number;
 
   @Column()
   message: string;
