@@ -9,12 +9,14 @@ import { Images } from "../entity/Images";
 require("dotenv").config();
 export = {
   getEvents: async (req: Request, res: Response) => {
-    const { address, date, guests } = req.body;
+    const { address, opendate, guests } = req.query;
+    console.log(opendate);
+    console.log(typeof opendate, typeof guests);
     const events = await getRepository(Events)
       .createQueryBuilder("Events")
       .leftJoinAndSelect("Events.user", "users")
       .where("Events.address like :searchCity", { searchCity: `%${address}%` })
-      .andWhere("Events.openDate = :searchDate", { searchDate: date })
+      .andWhere("Events.openDate = :searchDate", { searchDate: opendate })
       .andWhere("Events.guestMin <= :searchGuests", { searchGuests: guests })
       .andWhere("Events.guestMax >= :searchGuests", { searchGuests: guests })
       .getMany();
