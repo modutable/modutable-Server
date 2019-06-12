@@ -24,7 +24,8 @@ app.use(
 );
 app.use(express.json());
 
-app.use( // are we using JWT? if so, this session is unnecessary?
+app.use(
+  // are we using JWT? if so, this session is unnecessary?
   session({
     secret: secret.salt,
     resave: false,
@@ -36,7 +37,8 @@ const authRouter = auth(passport);
 
 app.use("/auth", authRouter);
 app.use(router);
-app.listen(process.env.PORT, () => { // if env var not provided....no back up no back up
+app.listen(process.env.PORT || 3000, () => {
+  // if env var not provided....no back up no back up
   console.log("server start Port :" + process.env.PORT);
 });
 
