@@ -12,9 +12,24 @@ export const publishToken = (userInfo: Object) => {
   });
 };
 
-export const checkToken = (req: any, res: Response, next: NextFunction) => {
+export const checkToken = async (
+  req: any,
+  res: Response,
+  next: NextFunction
+) => {
   const token = req.headers["authorization"];
-  new Promise((resolve, reject) => {
+
+  try {
+    const userInfo = await check(token);
+    req.user = userInfo;
+    next();
+  } catch (error) {
+    res.json(error);
+  }
+};
+
+export const check = (token: string) => {
+  return new Promise((resolve, reject) => {
     if (!token) {
       reject("다시 로그인 시도를 해주세요.");
     } else {
@@ -22,12 +37,5 @@ export const checkToken = (req: any, res: Response, next: NextFunction) => {
         err === null ? resolve(decoded) : reject(err);
       });
     }
-  })
-    .then((data: any) => {
-      req.user = data;
-      next();
-    })
-    .catch(error => {
-      res.json(error);
-    });
+  });
 };
