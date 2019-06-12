@@ -3,7 +3,8 @@ import {
   BaseEntity,
   PrimaryGeneratedColumn,
   Column,
-  OneToOne
+  OneToOne,
+  JoinColumn
 } from "typeorm";
 import { Users } from "./Users";
 @Entity()
@@ -11,12 +12,17 @@ export class Messages extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(type => Users, user => user.sendmessage)
+  @OneToOne(type => Users)
+  @JoinColumn()
   sendUser: Users;
+
   @Column()
   sendUserId: Number;
-  @OneToOne(type => Users, user => user.getmessage)
+
+  @OneToOne(type => Users)
+  @JoinColumn()
   getUser: Users;
+
   @Column()
   getUserId: Number;
 

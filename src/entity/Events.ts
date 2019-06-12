@@ -52,7 +52,7 @@ export class Events extends BaseEntity {
   user: Users;
   @Column()
   userId: Number;
-  @OneToMany(type => Users, user => user.event)
+  @OneToMany(type => Events_Users, Events_Users => Events_Users.event)
   events_users: Events_Users[];
 
   @OneToMany(type => Images, images => images.event)

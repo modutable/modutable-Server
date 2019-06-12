@@ -9,17 +9,19 @@ import { Images } from "../entity/Images";
 require("dotenv").config();
 export = {
   getEvents: async (req: Request, res: Response) => {
-    const { address, opendate, guests } = req.query;
-    console.log(opendate);
-    console.log(typeof opendate, typeof guests);
+    let { address, opendate, guests } = req.query;
+    var date = `${opendate.getFullYear()}-${opendate.getMonth() +
+      1}-${opendate.getDate()}`;
     const events = await getRepository(Events)
       .createQueryBuilder("Events")
       .leftJoinAndSelect("Events.user", "users")
+      .leftJoinAndSelect("Events.images", "images")
       .where("Events.address like :searchCity", { searchCity: `%${address}%` })
-      .andWhere("Events.openDate = :searchDate", { searchDate: opendate })
+      .andWhere("Events.openDate = :searchDate", { searchDate: date })
       .andWhere("Events.guestMin <= :searchGuests", { searchGuests: guests })
       .andWhere("Events.guestMax >= :searchGuests", { searchGuests: guests })
       .getMany();
+
     let resultEvents = events.map(event => {
       return {
         id: event.id,
@@ -28,7 +30,8 @@ export = {
         address: event.address,
         title: event.title,
         mealsType: event.mealsType,
-        reviewRating: event.rating
+        reviewRating: event.rating,
+        images: event.images[0].url
       };
     });
     res.json(resultEvents);
@@ -40,8 +43,18 @@ export = {
       .leftJoinAndSelect("Events.user", "users")
       .leftJoinAndSelect("Events.images", "images")
       .leftJoinAndSelect("Events.preparefoods", "preparefoods")
+      .leftJoinAndSelect("Events.events_users", "events_users")
       .where("Events.id = :id", { id: id })
       .getOne();
+    res.json(result);
+  },
+  getEventReview: async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const result = await getRepository(Events_Users)
+      .createQueryBuilder("Events_Users")
+      .leftJoinAndSelect("Events_Users.user", "users")
+      .where("Events_Users.eventId = :id", { id: id })
+      .getMany();
     res.json(result);
   },
   bookEvent: async (req: Request, res: Response) => {

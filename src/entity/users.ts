@@ -45,11 +45,6 @@ export class Users extends BaseEntity {
   @OneToMany(type => Preparefoods, Preparefoods => Preparefoods.user)
   preparefoods: Preparefoods[];
 
-  @OneToOne(type => Messages, message => message.sendUser)
-  sendmessage: Messages;
-  @OneToOne(type => Messages, message => message.getUser)
-  getmessage: Messages;
-
   @OneToMany(type => Events_Users, Events_Users => Events_Users.user)
   events_users: Events_Users[];
 }
