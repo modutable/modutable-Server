@@ -24,7 +24,8 @@ export = {
       .andWhere("Events.guestMax >= :searchGuests", { searchGuests: guests })
       .getMany();
 
-    let resultEvents = events.map(event => { // there should be a way doing this at one time when query
+    let resultEvents = events.map(event => {
+      // there should be a way doing this at one time when query
       return {
         id: event.id,
         userName: event.user.firstName,
@@ -51,11 +52,12 @@ export = {
     res.json(result);
   },
   getEventReview: async (req: Request, res: Response) => {
+    // 네임
     const { id } = req.params;
     const result = await getRepository(Events_Users)
       .createQueryBuilder("Events_Users") // if we know even id, why we need join table
       .leftJoinAndSelect("Events_Users.user", "users")
-      .where("Events_Users.eventId = :id", { id: id })
+      .where("Events_Users.eventId = :id", { id })
       .addOrderBy("Events_Users.updatedAt", "ASC")
       .getMany();
     res.json(result);

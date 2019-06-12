@@ -35,12 +35,14 @@ export = {
   getMessages: async (req: Request, res: Response) => {
     const userInfo = req.user;
     const toUserId = req.params.id;
-
-    await getRepository(Messages)
+    console.log(Number(userInfo.id), Number(toUserId));
+    const result = await getRepository(Messages)
       .createQueryBuilder("Messages")
-      .where("Messages.sendUserId = :id", { id: userInfo.id })
-      .andWhere("Messages.getUserId = ");
-    res.json(toUserId);
+      .where("Messages.sendUserId = :sendId", { sendId: Number(userInfo.id) })
+      .andWhere("Messages.getUserId = :getId", { getId: Number(toUserId) })
+      .getMany();
+    console.log(result);
+    res.json(result);
   }
 };
 
