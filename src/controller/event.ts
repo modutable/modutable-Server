@@ -10,6 +10,8 @@ require("dotenv").config();
 export = {
   getEvents: async (req: Request, res: Response) => {
     let { address, opendate, guests } = req.query;
+    opendate = new Date(opendate);
+
     var date = `${opendate.getFullYear()}-${opendate.getMonth() +
       1}-${opendate.getDate()}`;
     const events = await getRepository(Events)
@@ -54,6 +56,7 @@ export = {
       .createQueryBuilder("Events_Users")
       .leftJoinAndSelect("Events_Users.user", "users")
       .where("Events_Users.eventId = :id", { id: id })
+      .addOrderBy("Events_Users.updatedAt", "ASC")
       .getMany();
     res.json(result);
   },
