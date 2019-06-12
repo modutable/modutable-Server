@@ -7,13 +7,13 @@ const router = Router();
 
 export = function(passport: PassportStatic) {
   router.get(
-    "/login_process",
+    "/login_process", // not a good name
     passport.authenticate("local", {
       successRedirect: "/auth/sendToken",
       failureRedirect: "/auth/test"
     })
   );
-  router.get("/facebook", function(req, res) {
+  router.get("/facebook", function(req, res) { // what about /login/facebook
     passport.authenticate("facebook", {
       scope: "email"
     })(req, res);
@@ -25,7 +25,7 @@ export = function(passport: PassportStatic) {
       failureRedirect: "/auth/test"
     })
   );
-  router.get("/google", function(req, res) {
+  router.get("/google", function(req, res) { // same as facebook
     passport.authenticate("google", {
       scope: [
         "https://www.googleapis.com/auth/plus.login",
@@ -41,9 +41,9 @@ export = function(passport: PassportStatic) {
       failureRedirect: "/auth/test"
     })
   );
-
+ 
   router.get("/sendToken", userController.Login);
-  router.get("/sendSotialToken", userController.SotialLogin);
+  router.get("/sendSotialToken", userController.SotialLogin); // social token, and..why send social token?
   router.get("/test", userController.FailLogin);
   router.post("/signUp", userController.SignUp);
   router.post("/mypage", checkToken, userController.updateUserInfo);

@@ -24,7 +24,7 @@ export = {
       .andWhere("Events.guestMax >= :searchGuests", { searchGuests: guests })
       .getMany();
 
-    let resultEvents = events.map(event => {
+    let resultEvents = events.map(event => { // there should be a way doing this at one time when query
       return {
         id: event.id,
         userName: event.user.firstName,
@@ -53,7 +53,7 @@ export = {
   getEventReview: async (req: Request, res: Response) => {
     const { id } = req.params;
     const result = await getRepository(Events_Users)
-      .createQueryBuilder("Events_Users")
+      .createQueryBuilder("Events_Users") // if we know even id, why we need join table
       .leftJoinAndSelect("Events_Users.user", "users")
       .where("Events_Users.eventId = :id", { id: id })
       .addOrderBy("Events_Users.updatedAt", "ASC")
@@ -62,7 +62,7 @@ export = {
   },
   bookEvent: async (req: Request, res: Response) => {
     const eventId = req.params.id;
-    const userId = req.user.id;
+    const userId = req.user.id; // i'm confused, are we using token?
     const { foodNames } = req.body;
 
     const event = new Events();

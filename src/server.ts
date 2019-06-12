@@ -11,20 +11,20 @@ import secret from "./secret";
 import http from "http";
 
 require("dotenv").config();
-const socketServer = http.createServer();
+const socketServer = http.createServer(); // if express used,, there is a way to do it using express
 require("./socketServer")(socketServer);
 
 const app = express();
 ORMConnect();
 app.use(
   cors({
-    origin: process.env.CLIENT_URL, // frontend base url
+    origin: process.env.CLIENT_URL, // frontend base url // why we need to use env variable here?
     credentials: true
   })
 );
 app.use(express.json());
 
-app.use(
+app.use( // are we using JWT? if so, this session is unnecessary?
   session({
     secret: secret.salt,
     resave: false,
@@ -36,7 +36,7 @@ const authRouter = auth(passport);
 
 app.use("/auth", authRouter);
 app.use(router);
-app.listen(process.env.PORT, () => {
+app.listen(process.env.PORT, () => { // if env var not provided....no back up no back up
   console.log("server start Port :" + process.env.PORT);
 });
 
