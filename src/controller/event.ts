@@ -67,7 +67,6 @@ export = {
     const eventId = req.params.id;
     const userId = req.user.id; // i'm confused, are we using token?
     const { foodNames } = req.body;
-    console.log(eventId, userId, foodNames);
 
     const checkBook = await getRepository(Events_Users)
       .createQueryBuilder()
@@ -76,8 +75,22 @@ export = {
       .getMany();
 
     if (checkBook.length !== 0) {
-      res.json(false);
+      res.json("join");
     } else {
+      const checkfood = await getRepository(Preparefoods)
+        .createQueryBuilder()
+        .where(`Preparefoods.eventId = ${eventId}`)
+        .andWhere(`Preparefoods.state = 1`)
+        .getMany();
+
+      for (var el of checkfood) {
+        var obj = JSON.parse(JSON.stringify(el));
+        if (foodNames.includes(obj.name)) {
+          res.json("food");
+          return;
+        }
+      }
+
       const event = new Events();
       event.id = eventId;
       const user = new Users();
@@ -106,7 +119,7 @@ export = {
           .andWhere("name = :name", { name: food })
           .execute();
       }
-      res.json(true);
+      res.json("success");
     }
   },
   createEvent: async (req: Request, res: Response) => {
