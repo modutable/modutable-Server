@@ -75,6 +75,10 @@ export = {
     const event_user = new Events_Users();
     event_user.event = JSON.parse(JSON.stringify(event));
     event_user.user = JSON.parse(JSON.stringify(user));
+    event_user.createdAt = new Date();
+    event_user.updatedAt = new Date();
+    event_user.bookDate = new Date();
+    event_user.state = "신청중";
     await getRepository(Events_Users)
       .createQueryBuilder()
       .insert()

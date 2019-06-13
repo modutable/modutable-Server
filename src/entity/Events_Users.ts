@@ -29,6 +29,10 @@ export class Events_Users extends BaseEntity {
   review_date: Date;
   @Column()
   score: Number;
+  @Column()
+  createdAt: Date;
+  @Column()
+  updatedAt: Date;
 
   @ManyToOne(type => Users, user => user.events_users)
   user: Users;
