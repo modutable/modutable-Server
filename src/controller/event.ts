@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import "reflect-metadata";
-import { getRepository, createQueryBuilder } from "typeorm";
+import { getRepository, createQueryBuilder, Any } from "typeorm";
 import { Events } from "../entity/Events";
 import { Events_Users } from "../entity/Events_Users";
 import { Users } from "../entity/Users";
@@ -10,37 +10,59 @@ require("dotenv").config();
 export = {
   getEvents: async (req: Request, res: Response) => {
     let { address, opendate, guests } = req.query;
-    opendate = new Date(opendate);
+    if (opendate) {
+      opendate = new Date(opendate);
+      opendate = `${opendate.getFullYear()}-${opendate.getMonth() +
+        1}-${opendate.getDate()}`;
+    }
 
-    var date = `${opendate.getFullYear()}-${opendate.getMonth() +
-      1}-${opendate.getDate()}`;
-    const events = await getRepository(Events)
+    let events: any = getRepository(Events)
       .createQueryBuilder("Events")
       .leftJoinAndSelect("Events.user", "users")
       .leftJoinAndSelect("Events.images", "images")
-      .where("Events.address like :searchCity", { searchCity: `%${address}%` })
-      .andWhere("Events.openDate = :searchDate", { searchDate: date })
-      .andWhere("Events.guestMin <= :searchGuests", { searchGuests: guests })
-      .andWhere("Events.guestMax >= :searchGuests", { searchGuests: guests })
-      .getMany();
+      .where("Events.address like :searchCity", { searchCity: `%${address}%` });
 
-    let resultEvents = events.map(event => {
-      // there should be a way doing this at one time when query
-      return {
-        id: event.id,
-        userName: event.user.firstName,
-        profile: event.user.profileImg,
-        address: event.address,
-        title: event.title,
-        mealsType: event.mealsType,
-        reviewRating: event.rating,
-        images: event.images[0].url
-      };
-    });
+    if (opendate) {
+      console.log(111);
+      events = events.andWhere("Events.openDate = :searchDate", {
+        searchDate: opendate
+      });
+    }
+    if (guests) {
+      events = events
+        .andWhere("Events.guestMin <= :searchGuests", { searchGuests: guests })
+        .andWhere("Events.guestMax >= :searchGuests", { searchGuests: guests });
+    }
+    events = await events.getMany();
+    console.log(events);
+    let resultEvents = events.map(
+      (event: {
+        id: any;
+        user: { firstName: any; profileImg: any };
+        address: any;
+        title: any;
+        mealsType: any;
+        rating: any;
+        images: { url: any }[];
+      }) => {
+        // there should be a way doing this at one time when query
+        return {
+          id: event.id,
+          userName: event.user.firstName,
+          profile: event.user.profileImg,
+          address: event.address,
+          title: event.title,
+          mealsType: event.mealsType,
+          reviewRating: event.rating,
+          images: event.images[0].url
+        };
+      }
+    );
     res.json(resultEvents);
   },
   getOneEvent: async (req: Request, res: Response) => {
     const { id } = req.params;
+
     const result = await getRepository(Events)
       .createQueryBuilder("Events")
       .leftJoinAndSelect("Events.user", "users")
