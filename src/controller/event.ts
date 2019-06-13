@@ -10,31 +10,29 @@ require("dotenv").config();
 export = {
   getEvents: async (req: Request, res: Response) => {
     let { address, opendate, guests } = req.query;
-    if (opendate) {
+
+    if (opendate !== "undefined") {
       opendate = new Date(opendate);
       opendate = `${opendate.getFullYear()}-${opendate.getMonth() +
         1}-${opendate.getDate()}`;
     }
-
     let events: any = getRepository(Events)
       .createQueryBuilder("Events")
       .leftJoinAndSelect("Events.user", "users")
       .leftJoinAndSelect("Events.images", "images")
       .where("Events.address like :searchCity", { searchCity: `%${address}%` });
 
-    if (opendate) {
-      console.log(111);
+    if (opendate !== "undefined") {
       events = events.andWhere("Events.openDate = :searchDate", {
         searchDate: opendate
       });
     }
-    if (guests) {
+    if (guests !== "undefinedy") {
       events = events
         .andWhere("Events.guestMin <= :searchGuests", { searchGuests: guests })
         .andWhere("Events.guestMax >= :searchGuests", { searchGuests: guests });
     }
     events = await events.getMany();
-    console.log(events);
     let resultEvents = events.map(
       (event: {
         id: any;
