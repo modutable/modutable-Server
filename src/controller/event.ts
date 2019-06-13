@@ -75,18 +75,18 @@ export = {
       .getMany();
 
     if (checkBook.length !== 0) {
-      res.json("join");
+      res.json({ state: "join" });
     } else {
       const checkfood = await getRepository(Preparefoods)
         .createQueryBuilder()
         .where(`Preparefoods.eventId = ${eventId}`)
-        .andWhere(`Preparefoods.state = 1`)
         .getMany();
 
       for (var el of checkfood) {
         var obj = JSON.parse(JSON.stringify(el));
+        if (obj.state !== 1) continue;
         if (foodNames.includes(obj.name)) {
-          res.json("food");
+          res.json({ state: "food", data: checkfood });
           return;
         }
       }
@@ -119,7 +119,7 @@ export = {
           .andWhere("name = :name", { name: food })
           .execute();
       }
-      res.json("success");
+      res.json({ state: "success", data: checkfood });
     }
   },
   createEvent: async (req: Request, res: Response) => {
