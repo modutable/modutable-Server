@@ -16,7 +16,7 @@ export class Preparefoods extends BaseEntity {
   @Column()
   name: string;
   @Column()
-  state: string;
+  state: Number;
 
   @ManyToOne(type => Users, user => user.event)
   user: Users;

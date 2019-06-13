@@ -88,7 +88,7 @@ export = {
       event_user.createdAt = new Date();
       event_user.updatedAt = new Date();
       event_user.bookDate = new Date();
-      event_user.state = "신청중";
+      event_user.state = 0;
       await getRepository(Events_Users)
         .createQueryBuilder()
         .insert()
@@ -99,7 +99,7 @@ export = {
         await createQueryBuilder()
           .update(Preparefoods)
           .set({
-            state: "신청",
+            state: 1,
             userId: userId
           })
           .where("eventId = :id", { id: eventId })
@@ -129,7 +129,7 @@ export = {
         .values(imageClass)
         .execute();
     }
-    res.json("test");
+    res.json("good~ nice Created~!!");
   },
   updateEvent: async (req: Request, res: Response) => {
     const event = setEventObj(req);
