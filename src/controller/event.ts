@@ -58,6 +58,7 @@ export = {
       .createQueryBuilder("Events_Users") // if we know even id, why we need join table
       .leftJoinAndSelect("Events_Users.user", "users")
       .where("Events_Users.eventId = :id", { id })
+      .andWhere("Events_Users.review_contents is not null")
       .addOrderBy("Events_Users.updatedAt", "ASC")
       .getMany();
     res.json(result);
@@ -66,7 +67,7 @@ export = {
     const eventId = req.params.id;
     const userId = req.user.id; // i'm confused, are we using token?
     const { foodNames } = req.body;
-
+    console.log(eventId, userId, foodNames);
     const event = new Events();
     event.id = eventId;
     const user = new Users();
