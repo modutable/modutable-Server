@@ -76,6 +76,10 @@ export = {
       .andWhere("Preparefoods.userId = :id", { id: user.id })
       .getOne();
     res.json(result);
+  },
+  myInfo: async (req: Request, res: Response) => {
+    const { user } = req;
+    res.json(await checkUser(user));
   }
 };
 function redirect(res: Response, token: any) {
