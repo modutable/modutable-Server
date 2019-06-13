@@ -68,35 +68,46 @@ export = {
     const userId = req.user.id; // i'm confused, are we using token?
     const { foodNames } = req.body;
     console.log(eventId, userId, foodNames);
-    const event = new Events();
-    event.id = eventId;
-    const user = new Users();
-    user.id = userId;
-    const event_user = new Events_Users();
-    event_user.event = JSON.parse(JSON.stringify(event));
-    event_user.user = JSON.parse(JSON.stringify(user));
-    event_user.createdAt = new Date();
-    event_user.updatedAt = new Date();
-    event_user.bookDate = new Date();
-    event_user.state = "신청중";
-    await getRepository(Events_Users)
-      .createQueryBuilder()
-      .insert()
-      .values(event_user)
-      .execute();
 
-    for (var food of foodNames) {
-      await createQueryBuilder()
-        .update(Preparefoods)
-        .set({
-          state: "신청",
-          userId: userId
-        })
-        .where("eventId = :id", { id: eventId })
-        .andWhere("name = :name", { name: food })
+    const checkBook = await getRepository(Events_Users)
+      .createQueryBuilder()
+      .where("Events_Users.eventId = :eventId", { eventId })
+      .andWhere("Events_Users.userId =:userId", { userId })
+      .getMany();
+
+    if (checkBook.length !== 0) {
+      res.json(false);
+    } else {
+      const event = new Events();
+      event.id = eventId;
+      const user = new Users();
+      user.id = userId;
+      const event_user = new Events_Users();
+      event_user.event = JSON.parse(JSON.stringify(event));
+      event_user.user = JSON.parse(JSON.stringify(user));
+      event_user.createdAt = new Date();
+      event_user.updatedAt = new Date();
+      event_user.bookDate = new Date();
+      event_user.state = "신청중";
+      await getRepository(Events_Users)
+        .createQueryBuilder()
+        .insert()
+        .values(event_user)
         .execute();
+
+      for (var food of foodNames) {
+        await createQueryBuilder()
+          .update(Preparefoods)
+          .set({
+            state: "신청",
+            userId: userId
+          })
+          .where("eventId = :id", { id: eventId })
+          .andWhere("name = :name", { name: food })
+          .execute();
+      }
+      res.json(true);
     }
-    res.json("result");
   },
   createEvent: async (req: Request, res: Response) => {
     const event = setEventObj(req);
