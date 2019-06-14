@@ -56,7 +56,6 @@ async function getUserIdByEmail(email: string) {
 function talkingUserObj(list1: any, list2: any, myId: Number): Array<any> {
   var messageArray: any[] = [];
   var otherTemp: Number[] = [];
-
   while (true) {
     var message;
     if (!list1.length) {

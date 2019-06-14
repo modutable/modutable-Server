@@ -10,11 +10,11 @@ require("dotenv").config();
 export = {
   getEvents: async (req: Request, res: Response) => {
     let { address, opendate, guests } = req.query;
-
+    console.log(req.query);
     if (opendate !== "undefined") {
       opendate = new Date(opendate);
-      opendate = `${opendate.getFullYear()}-${opendate.getMonth() +
-        1}-${opendate.getDate()}`;
+      /* opendate = `${opendate.getFullYear()}-${opendate.getMonth() +
+        1}-${opendate.getDate()}`; */
     }
     let events: any = getRepository(Events)
       .createQueryBuilder("Events")
@@ -23,7 +23,7 @@ export = {
       .where("Events.address like :searchCity", { searchCity: `%${address}%` });
 
     if (opendate !== "undefined") {
-      events = events.andWhere("Events.openDate = :searchDate", {
+      events = events.andWhere("Events.deadline > :searchDate", {
         searchDate: opendate
       });
     }
@@ -161,12 +161,27 @@ export = {
   createEvent: async (req: Request, res: Response) => {
     const event = setEventObj(req);
     event.createdAt = new Date();
-    const { images } = req.body;
+    const { images, preparefoods } = req.body;
     const result = await getRepository(Events)
       .createQueryBuilder()
       .insert()
       .values(event)
       .execute();
+
+    for (var food of preparefoods) {
+      const preparefood = new Preparefoods();
+      preparefood.name = food;
+      preparefood.userId = req.user.id;
+      preparefood.eventId = result.raw.insertId;
+      preparefood.state = 0;
+      preparefood.createdAt = new Date();
+      preparefood;
+      await getRepository(Preparefoods)
+        .createQueryBuilder()
+        .insert()
+        .values(preparefood)
+        .execute();
+    }
 
     for (var image of images) {
       var imageClass = new Images();
@@ -225,8 +240,8 @@ function setEventObj(req: Request) {
   const {
     phone,
     address,
-    guest_min,
-    guest_max,
+    guestMin,
+    guestMax,
     openDate,
     title,
     mealsType,
@@ -238,8 +253,8 @@ function setEventObj(req: Request) {
   const event = new Events();
   event.phone = phone;
   event.address = address;
-  event.guestMin = guest_min;
-  event.guestMax = guest_max;
+  event.guestMin = guestMin;
+  event.guestMax = guestMax;
   event.openDate = openDate;
   event.title = title;
   event.description = description;
