@@ -50,7 +50,7 @@ export = function(passport: PassportStatic) {
   router.post("/signUp", userController.SignUp);
   router.post("/mypage", checkToken, userController.updateUserInfo);
   router.get("/mypage", checkToken, userController.mypage);
-  router.get("/myInfo", checkToken, userController.myInfo);
+  router.get("/myinfo", checkToken, userController.myInfo);
 
   return router;
 };

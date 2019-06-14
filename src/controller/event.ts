@@ -83,6 +83,22 @@ export = {
       .getMany();
     res.json(result);
   },
+  registerEventReview: async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { score, comment } = req.body;
+    try {
+      await getRepository(Events_Users)
+        .createQueryBuilder("Events_Users")
+        .update(Events_Users)
+        .set({ review_contents: comment, score, review_date: new Date() })
+        .where(`eventId = ${id}`)
+        .andWhere(`userId = ${req.user.id}`)
+        .andWhere(`state = 1`)
+        .execute();
+    } catch (error) {
+      res.json(error);
+    }
+  },
   bookEvent: async (req: Request, res: Response) => {
     const eventId = req.params.id;
     const userId = req.user.id; // i'm confused, are we using token?
@@ -195,10 +211,12 @@ export = {
   },
   deleteEvent: async (req: Request, res: Response) => {
     const { id } = req.params.id;
+    const userId = req.user.id;
     await getRepository(Events)
       .createQueryBuilder()
       .delete()
       .where("id = :id", { id: id })
+      .andWhere("userId = :userId", { userId })
       .execute();
   }
 };
