@@ -4,19 +4,15 @@ import { getRepository } from "typeorm";
 import { Messages } from "../entity/Messages";
 import { Users } from "../entity/Users";
 import { check } from "../middleware/tokenparser";
-import { MetadataArgsStorage } from "typeorm/metadata-args/MetadataArgsStorage";
 export = {
   save: async (data: any) => {
-    const fromUser = await check(data.from);
-    const toUser = await getUserIdByEmail(data.to);
-
     const newMessage = new Messages();
-    newMessage.sendUserId = JSON.parse(JSON.stringify(fromUser)).id;
-    newMessage.getUserId = JSON.parse(JSON.stringify(toUser)).id;
+    newMessage.sendUserId = data.sendUserId;
+    newMessage.getUserId = data.getUserId;
     newMessage.message = data.message;
-    newMessage.createdAt = new Date();
-    newMessage.updatedAt = new Date();
-    const result = await getRepository(Messages)
+    newMessage.createdAt = data.createdAt;
+    newMessage.updatedAt = data.updatedAt;
+    await getRepository(Messages)
       .createQueryBuilder()
       .insert()
       .values(newMessage)
@@ -29,25 +25,28 @@ export = {
       .leftJoinAndSelect("Messages.getUser", "users")
       .orWhere(`Messages.getUserId = ${userInfo.id}`)
       .getMany();
+
     const list2 = await getRepository(Messages)
       .createQueryBuilder("Messages")
       .leftJoinAndSelect("Messages.sendUser", "users")
       .where(`Messages.sendUserId = ${userInfo.id}`)
       .getMany();
     res.json(talkingUserObj(list1, list2, userInfo.id));
+
   },
   getMessages: async (req: Request, res: Response) => {
     const userInfo = req.user;
     const toUserId = req.params.id;
     const result = await getRepository(Messages)
       .createQueryBuilder("Messages")
-      .where("Messages.sendUserId = :sendId", { sendId: Number(userInfo.id) })
-      .andWhere("Messages.getUserId = :getId", { getId: Number(toUserId) })
+      .where(`Messages.sendUserId in (${userInfo.id},${toUserId})`)
+      .andWhere(`Messages.getUserId in (${userInfo.id},${toUserId})`)
+      .addOrderBy("Messages.createdAt", "ASC")
       .getMany();
-    console.log(result);
     res.json(result);
   }
 };
+<<<<<<< HEAD
 
 async function getUserIdByEmail(email: string) {
   return await getRepository(Users)
@@ -75,6 +74,11 @@ function talkingUserObj(list1: any, list2: any, myId: Number): Array<any> {
     messageArray.push(message);
   }
 
+=======
+function talkingUserObj(datas: any): Array<any> {
+  var messageArray = [];
+  var temp: Number[] = [];
+>>>>>>> 8adde72d8554bd4811f1d172d58b05abaa0b2781
   for (var i = datas.length - 1; i >= 0; i--) {
     var otherId =
       myId === datas[i].getUserId ? datas[i].sendUserId : datas[i].getUserId;
@@ -82,6 +86,7 @@ function talkingUserObj(list1: any, list2: any, myId: Number): Array<any> {
     var message: any = {};
     message.getUserId = datas[i].getUserId;
     message.user = datas[i].getUser.firstName + " " + datas[i].getUser.lastName;
+    message.email = datas[i].getUser.email;
     message.url = datas[i].getUser.profileImg;
     message.message = datas[i].message;
     message.mine = datas[i].sendUserId === myId ? true : false;
