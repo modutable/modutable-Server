@@ -32,7 +32,6 @@ export = {
       .where(`Messages.sendUserId = ${userInfo.id}`)
       .getMany();
     res.json(talkingUserObj(list1, list2, userInfo.id));
-
   },
   getMessages: async (req: Request, res: Response) => {
     const userInfo = req.user;
@@ -46,7 +45,6 @@ export = {
     res.json(result);
   }
 };
-<<<<<<< HEAD
 
 async function getUserIdByEmail(email: string) {
   return await getRepository(Users)
@@ -74,12 +72,7 @@ function talkingUserObj(list1: any, list2: any, myId: Number): Array<any> {
     messageArray.push(message);
   }
 
-=======
-function talkingUserObj(datas: any): Array<any> {
-  var messageArray = [];
-  var temp: Number[] = [];
->>>>>>> 8adde72d8554bd4811f1d172d58b05abaa0b2781
-  for (var i = datas.length - 1; i >= 0; i--) {
+  /*   for (var i = datas.length - 1; i >= 0; i--) {
     var otherId =
       myId === datas[i].getUserId ? datas[i].sendUserId : datas[i].getUserId;
     if (otherTemp.includes(otherId)) continue;
@@ -91,7 +84,7 @@ function talkingUserObj(datas: any): Array<any> {
     message.message = datas[i].message;
     message.mine = datas[i].sendUserId === myId ? true : false;
     messageArray.push(message);
-    otherTemp.push(otherId);
-  }
+    otherTemp.push(otherId); 
+  }*/
   return messageArray;
 }
