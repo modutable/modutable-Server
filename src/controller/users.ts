@@ -104,7 +104,7 @@ async function hasingPassword(password: string): Promise<string> {
 async function checkUser(user: any) {
   return await getRepository(Users)
     .createQueryBuilder("Users")
-    .where("Users.email like :email", { email: `%${user.email}%` })
+    .where("Users.email = :email", { email: user.Email || user.email })
     .getOne();
 }
 async function insertUser(user: Users) {

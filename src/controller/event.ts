@@ -81,6 +81,15 @@ export = {
       .getMany();
     res.json(result);
   },
+  getMyReview: async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const result: any = await getRepository(Events)
+      .createQueryBuilder("Events")
+      .leftJoinAndSelect("Events.events_users", "events_users")
+      .where("Events.userId = :id", { id })
+      .getMany();
+    res.json(result);
+  },
   getUserReview: async (req: Request, res: Response) => {
     // 네임
     const { id } = req.params;
