@@ -9,7 +9,7 @@ export = {
   SignUp: async (req: Request, res: Response) => {
     const user = await createUserClass(req);
     user.createdAt = new Date();
-    user.profileImg = "/init.png";
+    user.profileImg = `${process.env.PHOTO_S3}/profile/init.png`;
     var result = await checkUser(user);
     if (result !== undefined) {
       res.json({ message: "already" });
