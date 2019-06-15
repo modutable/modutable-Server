@@ -67,7 +67,7 @@ function talkingUserObj(list1: any, list2: any, myId: Number): Array<any> {
       messageArray = [...messageArray, ...list1];
       break;
     }
-    if (list1[list1.length - 1].createdAt > list2[list2.length - 1].createdAt) {
+    if (list1[list1.length - 1].createdAt < list2[list2.length - 1].createdAt) {
       message = list1.splice(list1.length - 1, 1);
     } else {
       message = list2.splice(list2.length - 2, 1);
@@ -92,7 +92,7 @@ function talkingUserObj(list1: any, list2: any, myId: Number): Array<any> {
         : message.getUser.email;
     newMessage.text = message.message;
     newMessage.createdAt = message.createdAt;
-    newMessage.isMine = message.getUserId === myId;
+    newMessage.isMine = message.sendUserId === myId;
     return newMessage;
   });
   return messageArray;
