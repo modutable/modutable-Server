@@ -10,11 +10,8 @@ require("dotenv").config();
 export = {
   getEvents: async (req: Request, res: Response) => {
     let { address, opendate, guests } = req.query;
-    console.log(req.query);
     if (opendate !== "undefined") {
       opendate = new Date(opendate);
-      /* opendate = `${opendate.getFullYear()}-${opendate.getMonth() +
-        1}-${opendate.getDate()}`; */
     }
     let events: any = getRepository(Events)
       .createQueryBuilder("Events")
@@ -23,11 +20,11 @@ export = {
       .where("Events.address like :searchCity", { searchCity: `%${address}%` });
 
     if (opendate !== "undefined") {
-      events = events.andWhere("Events.deadline > :searchDate", {
+      events = events.andWhere("Events.deadline <= :searchDate", {
         searchDate: opendate
       });
     }
-    if (guests !== "undefinedy") {
+    if (guests !== "undefined") {
       events = events
         .andWhere("Events.guestMin <= :searchGuests", { searchGuests: guests })
         .andWhere("Events.guestMax >= :searchGuests", { searchGuests: guests });
@@ -77,7 +74,21 @@ export = {
     const result = await getRepository(Events_Users)
       .createQueryBuilder("Events_Users") // if we know even id, why we need join table
       .leftJoinAndSelect("Events_Users.user", "users")
+      .leftJoinAndSelect("Events_Users.event", "events")
       .where("Events_Users.eventId = :id", { id })
+      .andWhere("Events_Users.review_contents is not null")
+      .addOrderBy("Events_Users.updatedAt", "ASC")
+      .getMany();
+    res.json(result);
+  },
+  getUserReview: async (req: Request, res: Response) => {
+    // 네임
+    const { id } = req.params;
+    const result = await getRepository(Events_Users)
+      .createQueryBuilder("Events_Users") // if we know even id, why we need join table
+      .leftJoinAndSelect("Events_Users.user", "users")
+      .leftJoinAndSelect("Events_Users.event", "events")
+      .where("Events_Users.userId = :id", { id })
       .andWhere("Events_Users.review_contents is not null")
       .addOrderBy("Events_Users.updatedAt", "ASC")
       .getMany();
@@ -255,6 +266,7 @@ function setEventObj(req: Request) {
   event.address = address;
   event.guestMin = guestMin;
   event.guestMax = guestMax;
+  event.guests = 0;
   event.openDate = openDate;
   event.title = title;
   event.description = description;

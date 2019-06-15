@@ -7,11 +7,10 @@ import { check } from "../middleware/tokenparser";
 export = {
   save: async (data: any) => {
     const newMessage = new Messages();
-    newMessage.sendUserId = data.sendUserId;
-    newMessage.getUserId = data.getUserId;
-    newMessage.message = data.message;
+    newMessage.sendUserId = data.myId;
+    newMessage.getUserId = data.otherUserId;
+    newMessage.message = data.text;
     newMessage.createdAt = data.createdAt;
-    newMessage.updatedAt = data.updatedAt;
     await getRepository(Messages)
       .createQueryBuilder()
       .insert()
@@ -22,16 +21,19 @@ export = {
     const userInfo = req.user;
     const list1 = await getRepository(Messages)
       .createQueryBuilder("Messages")
-      .leftJoinAndSelect("Messages.getUser", "users")
+      .leftJoinAndSelect("Messages.sendUser", "users")
       .orWhere(`Messages.getUserId = ${userInfo.id}`)
       .getMany();
 
     const list2 = await getRepository(Messages)
       .createQueryBuilder("Messages")
-      .leftJoinAndSelect("Messages.sendUser", "users")
+      .leftJoinAndSelect("Messages.getUser", "users")
       .where(`Messages.sendUserId = ${userInfo.id}`)
       .getMany();
-    res.json(talkingUserObj(list1, list2, userInfo.id));
+    res.json({
+      messages: talkingUserObj(list1, list2, req.user.id),
+      myId: userInfo.id
+    });
   },
   getMessages: async (req: Request, res: Response) => {
     const userInfo = req.user;
@@ -59,31 +61,39 @@ function talkingUserObj(list1: any, list2: any, myId: Number): Array<any> {
   while (true) {
     var message;
     if (!list1.length) {
-      return [...messageArray, ...list2];
+      messageArray = [...messageArray, ...list2];
+      break;
     } else if (!list2.length) {
-      return [...messageArray, ...list1];
+      messageArray = [...messageArray, ...list1];
+      break;
     }
     if (list1[list1.length - 1].createdAt > list2[list2.length - 1].createdAt) {
       message = list1.splice(list1.length - 1, 1);
     } else {
       message = list2.splice(list2.length - 2, 1);
     }
-    messageArray.push(message);
+    messageArray = [...messageArray, ...message];
   }
-
-  /*   for (var i = datas.length - 1; i >= 0; i--) {
-    var otherId =
-      myId === datas[i].getUserId ? datas[i].sendUserId : datas[i].getUserId;
-    if (otherTemp.includes(otherId)) continue;
-    var message: any = {};
-    message.getUserId = datas[i].getUserId;
-    message.user = datas[i].getUser.firstName + " " + datas[i].getUser.lastName;
-    message.email = datas[i].getUser.email;
-    message.url = datas[i].getUser.profileImg;
-    message.message = datas[i].message;
-    message.mine = datas[i].sendUserId === myId ? true : false;
-    messageArray.push(message);
-    otherTemp.push(otherId); 
-  }*/
+  messageArray = messageArray.map(message => {
+    var newMessage: any = {};
+    newMessage.otherUserId =
+      message.getUserId === myId ? message.sendUserId : message.getUserId;
+    newMessage.otherUserName =
+      message.getUserId === myId
+        ? message.sendUser.firstName + " " + message.sendUser.lastName
+        : message.getUser.firstName + " " + message.getUser.lastName;
+    newMessage.photo =
+      message.getUserId === myId
+        ? message.sendUser.profileImg
+        : message.getUser.profileImg;
+    newMessage.email =
+      message.getUserId === myId
+        ? message.sendUser.email
+        : message.getUser.email;
+    newMessage.text = message.message;
+    newMessage.createdAt = message.createdAt;
+    newMessage.isMine = message.getUserId === myId;
+    return newMessage;
+  });
   return messageArray;
 }
