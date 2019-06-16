@@ -86,6 +86,7 @@ export = {
     const result: any = await getRepository(Events)
       .createQueryBuilder("Events")
       .leftJoinAndSelect("Events.events_users", "events_users")
+      .leftJoinAndSelect("events_users.user", "users")
       .where("Events.userId = :id", { id })
       .getMany();
     res.json(result);
