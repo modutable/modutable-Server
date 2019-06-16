@@ -4,7 +4,6 @@ import userController from "../controller/users";
 import { checkToken, check } from "../middleware/tokenparser";
 
 const router = Router();
-
 export = function(passport: PassportStatic) {
   router.get(
     "/login_process", // not a good name
@@ -26,20 +25,19 @@ export = function(passport: PassportStatic) {
       failureRedirect: "/auth/test"
     })
   );
-  router.get("/google", function(req, res) {
+  router.get("/google", function(req: any, res: Response) {
     // same as facebook
+
+    var backurl = req.query.backurl.slice(1);
+    res.header("backurl", backurl);
     passport.authenticate("google", {
-      scope: [
-        "https://www.googleapis.com/auth/plus.login",
-        "https://www.googleapis.com/auth/plus.profile.emails.read",
-        "email"
-      ]
+      scope: ["email"]
     })(req, res);
   });
   router.get(
-    "/google/callback",
+    `/google/callback`,
     passport.authenticate("google", {
-      successRedirect: "/auth/sendSotialToken",
+      successRedirect: `/auth/sendSotialToken`,
       failureRedirect: "/auth/test"
     })
   );

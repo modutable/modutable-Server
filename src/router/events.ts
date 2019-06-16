@@ -5,6 +5,8 @@ import { checkToken } from "../middleware/tokenparser";
 const router = express.Router();
 
 router.get("/", eventController.getEvents);
+router.get("/myrequest", checkToken, eventController.myReq);
+
 router.get("/:id", eventController.getOneEvent);
 router.get("/reviews/:id", eventController.getEventReview);
 router.get("/userreviews/:id", eventController.getUserReview);

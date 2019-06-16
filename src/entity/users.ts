@@ -11,7 +11,6 @@ import {
 import { Events } from "./Events";
 import { Users_travelers } from "./Users_travelers";
 import { Preparefoods } from "./Preparefoods";
-import { Messages } from "./Messages";
 import { Events_Users } from "./Events_Users";
 @Entity()
 export class Users extends BaseEntity {

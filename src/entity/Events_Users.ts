@@ -20,7 +20,7 @@ export class Events_Users extends BaseEntity {
   id: number;
 
   @Column()
-  state: Number;
+  state: string;
   @Column()
   bookDate: Date;
   @Column()
