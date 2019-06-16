@@ -55,6 +55,15 @@ export = {
     );
     res.json(resultEvents);
   },
+  myReq: async (req: Request, res: Response) => {
+    const { id } = req.user;
+    const result = await Events_Users.createQueryBuilder()
+      .leftJoinAndSelect("Events_Users.event", "events")
+      .where(`events.userId = ${id}`)
+      .orWhere(`Events_Users.userId = ${id}`)
+      .getMany();
+    res.json(result);
+  },
   getOneEvent: async (req: Request, res: Response) => {
     const { id } = req.params;
 
@@ -114,7 +123,7 @@ export = {
         .set({ review_contents: comment, score, review_date: new Date() })
         .where(`eventId = ${id}`)
         .andWhere(`userId = ${req.user.id}`)
-        .andWhere(`state = 1`)
+        .andWhere(`state = pendding`)
         .execute();
     } catch (error) {
       res.json(error);
@@ -158,7 +167,7 @@ export = {
       event_user.createdAt = new Date();
       event_user.updatedAt = new Date();
       event_user.bookDate = new Date();
-      event_user.state = 0;
+      event_user.state = "confirm";
       await getRepository(Events_Users)
         .createQueryBuilder()
         .insert()

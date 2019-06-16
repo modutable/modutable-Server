@@ -17,6 +17,11 @@ export = {
       .values(newMessage)
       .execute();
   },
+  deleteMessages: async (req: Request, res: Response) => {
+    console.log(req.user);
+    console.log(req.params);
+    res.json("test");
+  },
   talkingUserList: async (req: Request, res: Response) => {
     const userInfo = req.user;
     const list1 = await getRepository(Messages)
