@@ -3,7 +3,6 @@ import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import { Messages } from "../entity/Messages";
 import { Users } from "../entity/Users";
-import { check } from "../middleware/tokenparser";
 export = {
   save: async (data: any) => {
     const newMessage = new Messages();
@@ -18,8 +17,16 @@ export = {
       .execute();
   },
   deleteMessages: async (req: Request, res: Response) => {
-    console.log(req.user);
-    console.log(req.params);
+    const myid = req.user.id;
+    const yourId = req.params.id;
+    console.log(11);
+    await getRepository(Messages)
+      .createQueryBuilder("Messages")
+      .delete()
+      .where(`Messages.sendUserId in (${myid},${yourId})`)
+      .andWhere(`Messages.getUserId in (${myid},${yourId})`)
+      .execute();
+
     res.json("test");
   },
   talkingUserList: async (req: Request, res: Response) => {
@@ -27,7 +34,7 @@ export = {
     const list1 = await getRepository(Messages)
       .createQueryBuilder("Messages")
       .leftJoinAndSelect("Messages.sendUser", "users")
-      .orWhere(`Messages.getUserId = ${userInfo.id}`)
+      .where(`Messages.getUserId = ${userInfo.id}`)
       .getMany();
 
     const list2 = await getRepository(Messages)

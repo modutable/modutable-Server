@@ -59,6 +59,8 @@ export = {
     const { id } = req.user;
     const result = await Events_Users.createQueryBuilder()
       .leftJoinAndSelect("Events_Users.event", "events")
+      .leftJoinAndSelect("Events_Users.user", "users")
+      .leftJoinAndSelect("users.preparefoods", "preparefoods")
       .where(`events.userId = ${id}`)
       .orWhere(`Events_Users.userId = ${id}`)
       .getMany();
