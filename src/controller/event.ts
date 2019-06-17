@@ -99,6 +99,7 @@ export = {
       .leftJoinAndSelect("Events.events_users", "events_users")
       .leftJoinAndSelect("events_users.user", "users")
       .where("Events.userId = :id", { id })
+      .andWhere("events_users.review_contents is not null")
       .getMany();
     res.json(result);
   },
@@ -126,6 +127,7 @@ export = {
         .where(`eventId = ${id}`)
         .andWhere(`userId = ${req.user.id}`)
         .andWhere(`state = pendding`)
+        .andWhere("Events_Users.review_contents is not null")
         .execute();
     } catch (error) {
       res.json(error);

@@ -32,7 +32,6 @@ export = {
     }
   },
   SotialLogin: async (req: any, res: Response) => {
-    console.log("--->", res.getHeader("backurl"));
     var result = await checkUser(req.user);
     if (result === undefined) {
       const user = new Users();
