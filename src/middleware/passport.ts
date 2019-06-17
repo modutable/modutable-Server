@@ -55,7 +55,7 @@ export = (app: Express) => {
     "emails",
     "name",
     "displayName",
-    "photos"
+    "picture.type(large)"
   ];
   passport.use(
     new FacebookStrategy(facebookCredentials, function(
@@ -73,7 +73,6 @@ export = (app: Express) => {
         Email: emails[0].value,
         profile: photos[0].value
       };
-      console.log(obj);
       done(null, obj);
     })
   );

@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
+import { getRepository, createQueryBuilder } from "typeorm";
 import { Messages } from "../entity/Messages";
 import { Users } from "../entity/Users";
 export = {
@@ -19,15 +19,14 @@ export = {
   deleteMessages: async (req: Request, res: Response) => {
     const myid = req.user.id;
     const yourId = req.params.id;
-    console.log(11);
-    await getRepository(Messages)
-      .createQueryBuilder("Messages")
+    await createQueryBuilder("messages")
       .delete()
-      .where(`Messages.sendUserId in (${myid},${yourId})`)
-      .andWhere(`Messages.getUserId in (${myid},${yourId})`)
+      .from(Messages)
+      .where(`messages.sendUserId in (${myid},${yourId})`)
+      .andWhere(`messages.getUserId in (${myid},${yourId})`)
       .execute();
 
-    res.json("test");
+    res.json("success Delete Messages");
   },
   talkingUserList: async (req: Request, res: Response) => {
     const userInfo = req.user;
@@ -59,13 +58,6 @@ export = {
     res.json(result);
   }
 };
-
-async function getUserIdByEmail(email: string) {
-  return await getRepository(Users)
-    .createQueryBuilder()
-    .where("email = :email", { email: email })
-    .getOne();
-}
 
 function talkingUserObj(list1: any, list2: any, myId: Number): Array<any> {
   var messageArray: any[] = [];
