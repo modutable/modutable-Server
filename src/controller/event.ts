@@ -192,6 +192,40 @@ export = {
       res.json({ state: "success", data: checkfood });
     }
   },
+  confirmEvent: async (req: Request, res: Response) => {
+    const yourId = req.body.id;
+    const eventId = req.body.eventId;
+    await createQueryBuilder()
+      .update(Events_Users)
+      .set({
+        state: "confirm"
+      })
+      .where(`eventId = ${eventId}`)
+      .andWhere(`userId = ${yourId}`)
+      .execute();
+    res.json({ state: "success confirm" });
+  },
+  cancleEvent: async (req: Request, res: Response) => {
+    const yourId = req.body.id;
+    const eventId = req.body.eventId;
+    await createQueryBuilder()
+      .update(Events_Users)
+      .set({
+        state: "cancle"
+      })
+      .where(`eventId = ${eventId}`)
+      .andWhere(`userId = ${yourId}`)
+      .execute();
+    await createQueryBuilder()
+      .update(Preparefoods)
+      .set({
+        state: false
+      })
+      .where(`eventId = ${eventId}`)
+      .andWhere(`userId = ${yourId}`)
+      .execute();
+    res.json({ state: "success cancle" });
+  },
   createEvent: async (req: Request, res: Response) => {
     const event = setEventObj(req);
     event.createdAt = new Date();
