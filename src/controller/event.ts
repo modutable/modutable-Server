@@ -56,15 +56,7 @@ export = {
     res.json(resultEvents);
   },
   myReq: async (req: Request, res: Response) => {
-    const { id } = req.user;
-    const result = await Events_Users.createQueryBuilder()
-      .leftJoinAndSelect("Events_Users.event", "events")
-      .leftJoinAndSelect("Events_Users.user", "users")
-      .leftJoinAndSelect("users.preparefoods", "preparefoods")
-      .where(`events.userId = ${id}`)
-      .orWhere(`Events_Users.userId = ${id}`)
-      .getMany();
-    res.json(result);
+    myrequest(req, res);
   },
   getOneEvent: async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -203,7 +195,7 @@ export = {
       .where(`eventId = ${eventId}`)
       .andWhere(`userId = ${yourId}`)
       .execute();
-    res.json({ state: "success confirm" });
+    myrequest(req, res);
   },
   cancleEvent: async (req: Request, res: Response) => {
     const yourId = req.body.id;
@@ -224,7 +216,7 @@ export = {
       .where(`eventId = ${eventId}`)
       .andWhere(`userId = ${yourId}`)
       .execute();
-    res.json({ state: "success cancle" });
+    myrequest(req, res);
   },
   createEvent: async (req: Request, res: Response) => {
     const event = setEventObj(req);
@@ -333,4 +325,16 @@ function setEventObj(req: Request) {
   event.updatedAt = new Date();
   event.userId = req.user.id;
   return event;
+}
+
+async function myrequest(req: Request, res: Response) {
+  const { id } = req.user;
+  const result = await Events_Users.createQueryBuilder()
+    .leftJoinAndSelect("Events_Users.event", "events")
+    .leftJoinAndSelect("Events_Users.user", "users")
+    .leftJoinAndSelect("users.preparefoods", "preparefoods")
+    .where(`events.userId = ${id}`)
+    .orWhere(`Events_Users.userId = ${id}`)
+    .getMany();
+  res.json(result);
 }

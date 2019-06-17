@@ -10,6 +10,7 @@ export = (socketServer: http.Server) => {
       socket.join(data.email);
     });
     socket.on("sendMessage", function(data) {
+      console.log(data);
       socket.to(data.email).emit("getMessage", data.text);
       messageController.save(data);
     });
