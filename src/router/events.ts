@@ -10,6 +10,8 @@ router.get("/myrequest", checkToken, eventController.myReq);
 router.get("/:id", eventController.getOneEvent);
 router.get("/reviews/:id", eventController.getEventReview);
 router.get("/userreviews/:id", eventController.getUserReview);
+router.post("/confirm", checkToken, eventController.confirmEvent);
+router.post("/cancle", checkToken, eventController.cancleEvent);
 router.post("/reviews/:id", checkToken, eventController.registerEventReview);
 router.get("/myreviews/:id", eventController.getMyReview);
 router.post("/book/:id", checkToken, eventController.bookEvent);
