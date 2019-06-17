@@ -27,9 +27,6 @@ export = function(passport: PassportStatic) {
   );
   router.get("/google", function(req: any, res: Response) {
     // same as facebook
-
-    var backurl = req.query.backurl.slice(1);
-    res.header("backurl", backurl);
     passport.authenticate("google", {
       scope: ["email"]
     })(req, res);
