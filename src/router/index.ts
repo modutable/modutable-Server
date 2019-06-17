@@ -7,7 +7,7 @@ require("dotenv").config();
 
 const router = express.Router();
 router.use("/events", eventsRouter);
-router.post("/mail", checkToken, mailController.sendMail);
 router.use("/messages", checkToken, messageRouter);
+router.get("/mail", mailController.sendMail);
 
 export = router;
