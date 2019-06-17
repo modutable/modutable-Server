@@ -6,17 +6,18 @@ require("dotenv").config();
 
 export = {
   sendMail: async (req: Request, res: Response) => {
+    console.log(req.query.email);
     const result = await getRepository(Users)
       .createQueryBuilder("Users")
-      .where(`Users.email = ${req.query.email}`)
+      .where(`Users.email = :email`, { email: req.query.email })
       .getMany();
     if (result.length === 0) {
       res.json(
-        "does not exit your Email in our Service. Please your confirm Email.."
+        "Does not exit your Email in our Service. Please your confirm Email.."
       );
       return;
     }
-
+    console.log(result);
     let transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {

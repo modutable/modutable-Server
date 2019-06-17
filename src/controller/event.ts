@@ -58,6 +58,17 @@ export = {
   myReq: async (req: Request, res: Response) => {
     myrequest(req, res);
   },
+  myReqDelete: async (req: Request, res: Response) => {
+    const yourId = req.body.id;
+    const eventId = req.body.eventId;
+    await createQueryBuilder()
+      .delete()
+      .from(Events_Users)
+      .where(`eventId = ${eventId}`)
+      .andWhere(`userId = ${yourId}`)
+      .execute();
+    myrequest(req, res);
+  },
   getOneEvent: async (req: Request, res: Response) => {
     const { id } = req.params;
 
