@@ -80,6 +80,16 @@ export = {
   myInfo: async (req: Request, res: Response) => {
     const { user } = req;
     res.json(await checkUser(user));
+  },
+  changePassword: async (req: Request, res: Response) => {
+    const userEmail = req.body.email;
+    const hasingvalue = await hasingPassword(req.body.password);
+    await createQueryBuilder()
+      .update(Users)
+      .set({ password: hasingvalue })
+      .where("email = :email", { email: userEmail })
+      .execute();
+    res.json("Good~! Change password");
   }
 };
 function redirect(res: Response, token: any) {

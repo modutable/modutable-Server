@@ -17,7 +17,9 @@ export = {
       .createQueryBuilder("Events")
       .leftJoinAndSelect("Events.user", "users")
       .leftJoinAndSelect("Events.images", "images")
-      .where("Events.address like :searchCity", { searchCity: `%${address}%` });
+      .leftJoinAndSelect("Events.events_users", "events_Users")
+      .where("Events.address like :searchCity", { searchCity: `%${address}%` })
+      .andWhere("events_Users.state =:state", { state: "confirm" });
 
     if (opendate !== "undefined") {
       events = events.andWhere("Events.deadline <= :searchDate", {
@@ -39,8 +41,13 @@ export = {
         mealsType: any;
         rating: any;
         images: { url: any }[];
+        events_users: any;
       }) => {
         // there should be a way doing this at one time when query
+        var scoreSum = 0;
+        for (var el of event.events_users) {
+          scoreSum += el.score;
+        }
         return {
           id: event.id,
           userName: event.user.firstName,
@@ -48,8 +55,8 @@ export = {
           address: event.address,
           title: event.title,
           mealsType: event.mealsType,
-          reviewRating: event.rating,
-          images: event.images[0].url
+          images: event.images[0].url,
+          reviewRating: scoreSum / event.events_users.length
         };
       }
     );
