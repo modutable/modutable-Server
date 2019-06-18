@@ -17,7 +17,6 @@ export = {
       );
       return;
     }
-    console.log(result);
     let transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -29,9 +28,10 @@ export = {
       from: "'InYong@moduTable.com <jiy8319@gmail.com>'", // 발송 메일 주소 (위에서 작성한 gmail 계정 아이디)
       to: req.query.email, // 수신 메일 주소
       subject: "You can change you Password!", // 제목
-      html: `You can change your password by following the link below. \n<p>Click <a href="${
-        process.env.MAIL_RINK
-      }">here</a></p>`
+      html: `You can change your password by following the link below. \n<p>Click <a href="${process
+        .env.MAIL_RINK +
+        "?email=" +
+        req.query.email}">here</a></p>`
     };
     transporter.sendMail(mailOptions, function(error, info) {
       if (error) {
