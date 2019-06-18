@@ -18,8 +18,8 @@ export = {
       .leftJoinAndSelect("Events.user", "users")
       .leftJoinAndSelect("Events.images", "images")
       .leftJoinAndSelect("Events.events_users", "events_Users")
-      .where("Events.address like :searchCity", { searchCity: `%${address}%` })
-      .andWhere("events_Users.state =:state", { state: "confirm" });
+      .where("Events.address like :searchCity", { searchCity: `%${address}%` });
+    //.andWhere("events_Users.state =:state", { state: "confirm" });
 
     if (opendate !== "undefined") {
       events = events.andWhere("Events.deadline <= :searchDate", {
@@ -129,6 +129,7 @@ export = {
   registerEventReview: async (req: Request, res: Response) => {
     const { id } = req.params;
     const { score, comment } = req.body;
+    console.log(id, score, comment, req.user.id);
     try {
       await getRepository(Events_Users)
         .createQueryBuilder("Events_Users")
@@ -136,8 +137,7 @@ export = {
         .set({ review_contents: comment, score, review_date: new Date() })
         .where(`eventId = ${id}`)
         .andWhere(`userId = ${req.user.id}`)
-        .andWhere(`state = pendding`)
-        .andWhere("Events_Users.review_contents is not null")
+        .andWhere(`state = 'confirm'`)
         .execute();
     } catch (error) {
       res.json(error);
@@ -146,11 +146,11 @@ export = {
   bookEvent: async (req: Request, res: Response) => {
     const eventId = req.params.id;
     const userId = req.user.id; // i'm confused, are we using token?
-    const { foodNames } = req.body;
-
+    const { foodNames, guests } = req.body;
+    console.log(eventId, userId, req.body);
     const checkBook = await getRepository(Events_Users)
       .createQueryBuilder()
-      .where("Events_Users.eventId = :eventId", { eventId })
+      .where(`Events_Users.eventId =${eventId}`)
       .andWhere("Events_Users.userId =:userId", { userId })
       .getMany();
 
@@ -181,7 +181,23 @@ export = {
       event_user.createdAt = new Date();
       event_user.updatedAt = new Date();
       event_user.bookDate = new Date();
-      event_user.state = "confirm";
+      event_user.state = "pending";
+
+      const result1: any = await getRepository(Events)
+        .createQueryBuilder("Events")
+        .where("Events.id = :id", { id: eventId })
+        .getOne();
+      const updateEvent = await createQueryBuilder()
+        .update(Events)
+        .set({
+          guests: result1.guests + guests
+        })
+        .where(`id = ${eventId}`)
+        .execute();
+      const result2: any = await getRepository(Events)
+        .createQueryBuilder("Events")
+        .where("Events.id = :id", { id: eventId })
+        .getOne();
       await getRepository(Events_Users)
         .createQueryBuilder()
         .insert()
@@ -199,7 +215,7 @@ export = {
           .andWhere("name = :name", { name: food })
           .execute();
       }
-      res.json({ state: "success", data: checkfood });
+      res.json({ state: "success", data: checkfood, guests: result2.guests });
     }
   },
   confirmEvent: async (req: Request, res: Response) => {
