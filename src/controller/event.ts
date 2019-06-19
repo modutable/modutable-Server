@@ -6,6 +6,7 @@ import { Events_Users } from "../entity/Events_Users";
 import { Users } from "../entity/Users";
 import { Preparefoods } from "../entity/Preparefoods";
 import { Images } from "../entity/Images";
+import { isNull } from "util";
 require("dotenv").config();
 export = {
   getEvents: async (req: Request, res: Response) => {
@@ -43,11 +44,15 @@ export = {
         images: { url: any }[];
         events_users: any;
       }) => {
-        // there should be a way doing this at one time when query
-        var scoreSum = 0;
-        for (var el of event.events_users) {
-          scoreSum += el.score;
+        const eventsReviews = event.events_users.filter((event: any) => {
+          return event.score !== null;
+        });
+        var sum = 0;
+        for (var el of eventsReviews) {
+          sum += el.score;
         }
+
+        var ave = eventsReviews.length === 0 ? 0 : sum / eventsReviews.length;
         return {
           id: event.id,
           userName: event.user.firstName,
@@ -56,7 +61,7 @@ export = {
           title: event.title,
           mealsType: event.mealsType,
           images: event.images[0].url,
-          reviewRating: scoreSum / event.events_users.length
+          reviewRating: ave
         };
       }
     );
