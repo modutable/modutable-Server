@@ -33,7 +33,6 @@ export = {
         .andWhere("Events.guestMax >= :searchGuests", { searchGuests: guests });
     }
     events = await events.getMany();
-
     let resultEvents = events.map(
       (event: {
         id: any;
@@ -45,13 +44,15 @@ export = {
         images: { url: any }[];
         events_users: any;
       }) => {
+        const eventsReviews = event.events_users.filter((event: any) => {
+          return event.score !== null;
+        });
         var sum = 0;
-        for (var el of event.events_users) {
+        for (var el of eventsReviews) {
           sum += el.score;
         }
-        var ave =
-          event.events_users.length === 0 ? 0 : sum / event.events_users.length;
 
+        var ave = eventsReviews.length === 0 ? 0 : sum / eventsReviews.length;
         return {
           id: event.id,
           userName: event.user.firstName,
