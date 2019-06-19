@@ -6,7 +6,6 @@ import { Events_Users } from "../entity/Events_Users";
 import { Users } from "../entity/Users";
 import { Preparefoods } from "../entity/Preparefoods";
 import { Images } from "../entity/Images";
-import { isNull } from "util";
 require("dotenv").config();
 export = {
   getEvents: async (req: Request, res: Response) => {
@@ -19,11 +18,10 @@ export = {
       .leftJoinAndSelect("Events.user", "users")
       .leftJoinAndSelect("Events.images", "images")
       .leftJoinAndSelect("Events.events_users", "events_Users")
-      .where("Events.address like :searchCity", { searchCity: `%${address}%` });
-    //.andWhere("events_Users.state =:state", { state: "confirm" });
-
+      .where("Events.address like :searchCity", { searchCity: `%${address}%` })
+      .andWhere("Events.openDate >= :openDate", { openDate: new Date() });
     if (opendate !== "undefined") {
-      events = events.andWhere("Events.deadline <= :searchDate", {
+      events = events.andWhere("Events.deadline >= :searchDate", {
         searchDate: opendate
       });
     }
@@ -167,6 +165,7 @@ export = {
     } catch (error) {
       res.json(error);
     }
+    res.json("good");
   },
   bookEvent: async (req: Request, res: Response) => {
     const eventId = req.params.id;

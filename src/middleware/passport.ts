@@ -66,14 +66,18 @@ export = (app: Express) => {
       done: any
     ) {
       var { id, name, emails, photos } = profile;
-      var obj: any = {
-        id,
-        firstName: name.givenName,
-        lastName: name.familyName,
-        Email: emails[0].value,
-        profile: photos[0].value
-      };
-      done(null, obj);
+      if (emails === undefined) {
+        done("no Email in your facebook Info", null);
+      } else {
+        var obj: any = {
+          id,
+          firstName: name.givenName,
+          lastName: name.familyName,
+          Email: emails[0].value,
+          profile: photos[0].value
+        };
+        done(null, obj);
+      }
     })
   );
   var googleCredentials = require("../../secret/google.json");
