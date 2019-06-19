@@ -68,6 +68,27 @@ export = {
   myReqDelete: async (req: Request, res: Response) => {
     const yourId = req.body.id;
     const eventId = req.body.eventId;
+
+    const events_usersReulst: any = await getRepository(Events_Users)
+      .createQueryBuilder("Events_Users")
+      .where("userId = :userId", { userId: yourId })
+      .andWhere("eventId = :eventId", { eventId })
+      .getOne();
+    const eventsResult: any = await getRepository(Events)
+      .createQueryBuilder("Events")
+      .where("id = :id", { id: eventId })
+      .getOne();
+    var eventGuests = eventsResult.guests;
+    var deleteGuests = events_usersReulst.guests;
+
+    await createQueryBuilder()
+      .update(Events)
+      .set({
+        guests: eventGuests - deleteGuests
+      })
+      .where(`id = ${eventId}`)
+      .execute();
+
     await createQueryBuilder()
       .delete()
       .from(Events_Users)
@@ -186,10 +207,10 @@ export = {
         .createQueryBuilder("Events")
         .where("Events.id = :id", { id: eventId })
         .getOne();
-      const updateEvent = await createQueryBuilder()
+      await createQueryBuilder()
         .update(Events)
         .set({
-          guests: result1.guests + guests
+          guests: Number(result1.guests) + Number(guests)
         })
         .where(`id = ${eventId}`)
         .execute();
