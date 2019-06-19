@@ -6,7 +6,6 @@ require("dotenv").config();
 
 export = {
   sendMail: async (req: Request, res: Response) => {
-    console.log(req.query.email);
     const result = await getRepository(Users)
       .createQueryBuilder("Users")
       .where(`Users.email = :email`, { email: req.query.email })

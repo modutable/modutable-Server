@@ -129,7 +129,6 @@ export = {
   registerEventReview: async (req: Request, res: Response) => {
     const { id } = req.params;
     const { score, comment } = req.body;
-    console.log(id, score, comment, req.user.id);
     try {
       await getRepository(Events_Users)
         .createQueryBuilder("Events_Users")
@@ -147,7 +146,6 @@ export = {
     const eventId = req.params.id;
     const userId = req.user.id; // i'm confused, are we using token?
     const { foodNames, guests } = req.body;
-    console.log(eventId, userId, req.body);
     const checkBook = await getRepository(Events_Users)
       .createQueryBuilder()
       .where(`Events_Users.eventId =${eventId}`)
@@ -181,6 +179,7 @@ export = {
       event_user.createdAt = new Date();
       event_user.updatedAt = new Date();
       event_user.bookDate = new Date();
+      event_user.guests = Number(guests);
       event_user.state = "pending";
 
       const result1: any = await getRepository(Events)
@@ -214,6 +213,9 @@ export = {
           .where("eventId = :id", { id: eventId })
           .andWhere("name = :name", { name: food })
           .execute();
+        for (var t of checkfood) {
+          if (t.name === food) t.state = 1;
+        }
       }
       res.json({ state: "success", data: checkfood, guests: result2.guests });
     }
