@@ -167,6 +167,7 @@ export = {
     } catch (error) {
       res.json(error);
     }
+    res.json("good");
   },
   bookEvent: async (req: Request, res: Response) => {
     const eventId = req.params.id;
