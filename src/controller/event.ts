@@ -69,8 +69,7 @@ export = {
     myrequest(req, res);
   },
   myReqDelete: async (req: Request, res: Response) => {
-    const yourId = req.body.id;
-    const eventId = req.body.eventId;
+    const { yourId, eventId } = req.query;
 
     const events_usersReulst: any = await getRepository(Events_Users)
       .createQueryBuilder("Events_Users")
@@ -292,7 +291,7 @@ export = {
     for (var food of preparefoods) {
       const preparefood = new Preparefoods();
       preparefood.name = food;
-      preparefood.userId = req.user.id;
+      preparefood.userId = -1;
       preparefood.eventId = result.raw.insertId;
       preparefood.state = 0;
       preparefood.createdAt = new Date();
