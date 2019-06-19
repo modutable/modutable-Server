@@ -47,6 +47,7 @@ export = function(passport: PassportStatic) {
   router.get("/mypage", checkToken, userController.mypage);
   router.get("/myinfo", checkToken, userController.myInfo);
   router.post("/password", userController.changePassword);
+  router.post("/updateimg", checkToken, userController.updateProfileImg);
 
   return router;
 };

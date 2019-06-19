@@ -52,6 +52,19 @@ export = {
   FailLogin: async (req: Request, res: Response) => {
     res.json("fail Login");
   },
+  updateProfileImg: async (req: Request, res: Response) => {
+    const { profileImg } = req.body;
+    const { id } = req.user;
+    console.log(req.body, id);
+    await createQueryBuilder()
+      .update(Users)
+      .set({
+        profileImg
+      })
+      .where("id = :id", { id })
+      .execute();
+    res.json("Good~! vupdate userInfo");
+  },
   updateUserInfo: async (req: Request, res: Response) => {
     const { profileImg } = req.body;
     const user = await createUserClass(req);
