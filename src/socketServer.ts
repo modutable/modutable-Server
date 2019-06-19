@@ -9,7 +9,6 @@ export = (socketServer: http.Server) => {
   io.on("connection", socket => {
     socket.on("login", async function(data) {
       const userInfo: any = await check(data.token);
-      console.log(userInfo);
       socket.join(userInfo.email);
     });
     socket.on("sendMessage", async function(data) {

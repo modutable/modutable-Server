@@ -33,7 +33,8 @@ export class Events_Users extends BaseEntity {
   createdAt: Date;
   @Column()
   updatedAt: Date;
-
+  @Column()
+  guests: Number;
   @ManyToOne(type => Users, user => user.events_users)
   user: Users;
   @Column()
