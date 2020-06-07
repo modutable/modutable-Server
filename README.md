@@ -12,12 +12,12 @@
 
 ## 사용 기술 스택
 
-- Typescript
+- typescript
 - node Express
 - JWT
-- Passport.js
+- passport.js
 - socket.io
-- TypeORM
+- typeORM
 
 ## 프로젝트 실행 방법
 
