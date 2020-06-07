@@ -1,4 +1,5 @@
-# Modu Table
+
+![image](https://user-images.githubusercontent.com/13481627/83964721-cd187580-a8e9-11ea-97b2-c7d191a73b7f.png)
 
 자신의 공간을 공유하고 **초대받으며** 같이 식사를 할 수 있도록 도와주는 플랫폼
 
