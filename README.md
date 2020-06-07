@@ -14,6 +14,6 @@
 
 ### `npm install` : 프로젝트에 필요로 한 라이브러리 설치
 
-### `npm start` : 클라이언트 서비스 실행
+### `npm start` :  실행
 
 ### [관련 블로그 내용 정리](https://helloinyong.tistory.com/144)
